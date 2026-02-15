@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diff Tool</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h1>Diff Tool</h1>
+            
+            <div v-if="!has_active_session" class="upload-section">
+                <div class="upload-group">
+                    <div class="upload-item">
+                        <label>Original File:</label>
+                        <input type="file" @change="handleFile1" :disabled="has_active_session">
+                    </div>
+                    <div class="upload-item">
+                        <label>Modified File:</label>
+                        <input type="file" @change="handleFile2" :disabled="has_active_session">
+                    </div>
+                </div>
+                <button @click="startDiff" :disabled="!file1 || !file2 || isLoading" class="btn primary">
+                    {{ isLoading ? 'Loading...' : 'Compare' }}
+                </button>
+            </div>
+            
+            <div v-if="has_active_session" class="diff-section">
+                <div class="toolbar">
+                    <span v-if="has_unsaved_changes" class="unsaved-indicator">Unsaved changes</span>
+                    <div class="toolbar-buttons">
+                        <button @click="undo" :disabled="!can_undo" class="btn secondary">Undo</button>
+                        <button @click="saveChanges" :disabled="!has_unsaved_changes || isSaving" class="btn primary">
+                            {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                        </button>
+                        <button @click="cancelSession" class="btn danger">Cancel</button>
+                    </div>
+                </div>
+                
+                <diff-viewer
+                    :original-blocks="original_blocks"
+                    :modified-blocks="modified_blocks"
+                    @copy-to-original="handleCopyToOriginal"
+                    @copy-to-modified="handleCopyToModified"
+                ></diff-viewer>
+            </div>
+            
+            <div v-if="error" class="error">{{ error }}</div>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

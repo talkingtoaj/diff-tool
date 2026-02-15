@@ -1,0 +1,13 @@
+INFO:     Started server process [28984]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49138 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37880 - "POST /api/diff/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60290 - "POST /api/diff/start HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51302 - "DELETE /api/diff/60e42d76-2e4c-4493-8b71-2a255e8c6079 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51308 - "DELETE /api/diff/c810ccd9-2bd7-467d-b742-80da8e15f3f3 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [28984]

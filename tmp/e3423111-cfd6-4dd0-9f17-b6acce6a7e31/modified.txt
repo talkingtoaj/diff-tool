@@ -1,0 +1,4 @@
+Hello world.
+This sentence was added.
+This sentence stays.
+This sentence was changed.

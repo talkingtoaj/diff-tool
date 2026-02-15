@@ -1,0 +1,11 @@
+The quick brown fox jumps over the lazy dog.
+
+This is modified text with changes.
+
+New sentence added here.
+
+Testing diff functionality with multiple sentences.
+
+Different content here.
+
+And another sentence.
