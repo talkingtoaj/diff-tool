@@ -25,15 +25,6 @@ createApp({
             error: null
         }
     },
-    watch: {
-        has_active_session(newVal) {
-            if (newVal) {
-                setTimeout(() => {
-                    this.setupScrollSync();
-                }, 500);
-            }
-        }
-    },
     mounted() {
         document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
@@ -55,111 +46,60 @@ createApp({
             },
             emits: ['copy-to-original', 'copy-to-modified'],
             data() {
-                return {
-                    isScrolling: false
-                };
+                return {};
             },
             methods: {
-                getWordHtml(words, type) {
-                    if (!words || words.length === 0) return '';
-                    return words.map(w => {
-                        if (type === 'insert') {
-                            return `<span class="word-added">${this.escapeHtml(w)}</span>`;
-                        } else if (type === 'delete') {
-                            return `<span class="word-removed">${this.escapeHtml(w)}</span>`;
-                        } else if (type === 'equal') {
-                            return `<span class="word-equal">${this.escapeHtml(w)}</span>`;
-                        }
-                        return this.escapeHtml(w);
-                    }).join(' ');
-                },
                 escapeHtml(text) {
                     const div = document.createElement('div');
                     div.textContent = text;
                     return div.innerHTML;
-                },
-                renderBlockContent(block, side) {
-                    if (side === 'original') {
-                        return block.original_sentences ? block.original_sentences.join(' ') : '';
-                    } else {
-                        return block.modified_sentences ? block.modified_sentences.join(' ') : '';
-                    }
-                },
-                syncScroll(event, sourcePanel) {
-                    if (this.isScrolling) return;
-                    
-                    const source = event.target;
-                    const panels = this.$el.querySelectorAll('.panel');
-                    const divider = this.$el.querySelector('.divider');
-                    const targetIndex = sourcePanel === 'left' ? 1 : 0;
-                    const target = panels[targetIndex];
-                    
-                    const maxScroll = source.scrollHeight - source.clientHeight;
-                    if (maxScroll <= 0 || !target) return;
-                    
-                    this.isScrolling = true;
-                    const scrollPct = source.scrollTop / maxScroll;
-                    const targetMaxScroll = target.scrollHeight - target.clientHeight;
-                    target.scrollTop = scrollPct * targetMaxScroll;
-                    
-                    // Sync divider scroll
-                    if (divider) {
-                        const dividerMaxScroll = divider.scrollHeight - divider.clientHeight;
-                        if (dividerMaxScroll > 0) {
-                            divider.scrollTop = scrollPct * dividerMaxScroll;
-                        }
-                    }
-                    
-                    setTimeout(() => { this.isScrolling = false; }, 50);
                 }
             },
-            mounted() {
-                const panels = this.$el.querySelectorAll('.panel');
-                panels[0].addEventListener('scroll', (e) => this.syncScroll(e, 'left'));
-                panels[1].addEventListener('scroll', (e) => this.syncScroll(e, 'right'));
-            },
             template: `
-                <div class="diff-viewer" ref="diffViewer">
-                    <div class="panel" ref="leftPanel" @scroll="syncScroll($event, 'left')">
-                        <div class="panel-header">Original</div>
-                        <div v-for="(block, index) in originalBlocks" :key="'orig-' + index" 
-                             :class="['block', block.type, { 'blank-block': block.isBlank }]">
-                            <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
-                                 :class="{ 'sentence-placeholder': sentence === '' }">
-                                <template v-if="sentence === ''">&nbsp;</template>
-                                <template v-else>{{ sentence }}</template>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="divider" ref="dividerPanel">
-                        <div class="panel-header-spacer"></div>
-                        <div v-for="(block, index) in originalBlocks" :key="'ctrl-' + index" 
-                             class="copy-controls">
-                            <button v-if="block.type === 'added' || block.type === 'changed'"
-                                    class="copy-btn copy-to-original"
-                                    @click="$emit('copy-to-original', index)"
-                                    title="Copy to Original">
-                                ←
-                            </button>
-                            <button v-if="block.type === 'removed' || block.type === 'changed'"
-                                    class="copy-btn copy-to-modified"
-                                    @click="$emit('copy-to-modified', index)"
-                                    title="Copy to Modified">
-                                →
-                            </button>
-                        </div>
-                    </div>
-                    <div class="panel" ref="rightPanel" @scroll="syncScroll($event, 'right')">
-                        <div class="panel-header">Modified</div>
-                        <div v-for="(block, index) in modifiedBlocks" :key="'mod-' + index" 
-                             :class="['block', block.type, { 'blank-block': block.isBlank }]">
-                            <div v-for="(sentence, sIndex) in block.sentences" :key="'mod-s-' + index + '-' + sIndex"
-                                 :class="{ 'sentence-placeholder': sentence === '' }">
-                                <template v-if="sentence === ''">&nbsp;</template>
-                                <template v-else>{{ sentence }}</template>
-                            </div>
-                        </div>
-                    </div>
+                <div class="diff-viewer">
+                    <table class="diff-table">
+                        <thead>
+                            <tr>
+                                <th class="panel-header">Original</th>
+                                <th class="divider-header"></th>
+                                <th class="panel-header">Modified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(block, index) in originalBlocks" :key="'row-' + index">
+                                <td :class="['block-cell', block.type, { 'blank-block': block.isBlank }]">
+                                    <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
+                                         :class="{ 'sentence-placeholder': sentence === '' }">
+                                        <template v-if="sentence === ''">&nbsp;</template>
+                                        <template v-else>{{ sentence }}</template>
+                                    </div>
+                                </td>
+                                <td class="divider-cell">
+                                    <div class="copy-controls">
+                                        <button v-if="block.type === 'added' || block.type === 'changed'"
+                                                class="copy-btn copy-to-original"
+                                                @click="$emit('copy-to-original', index)"
+                                                title="Copy to Original">
+                                            ←
+                                        </button>
+                                        <button v-if="block.type === 'removed' || block.type === 'changed'"
+                                                class="copy-btn copy-to-modified"
+                                                @click="$emit('copy-to-modified', index)"
+                                                title="Copy to Modified">
+                                            →
+                                        </button>
+                                    </div>
+                                </td>
+                                <td :class="['block-cell', modifiedBlocks[index]?.type, { 'blank-block': modifiedBlocks[index]?.isBlank }]">
+                                    <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
+                                         :class="{ 'sentence-placeholder': sentence === '' }">
+                                        <template v-if="sentence === ''">&nbsp;</template>
+                                        <template v-else>{{ sentence }}</template>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             `
         }
@@ -194,11 +134,6 @@ createApp({
                 this.undo_stack = [];
                 this.can_undo = false;
                 this.has_unsaved_changes = false;
-                
-                // Set up scroll sync after DOM is updated
-                this.$nextTick(() => {
-                    setTimeout(() => this.setupScrollSync(), 100);
-                });
                 
             } catch (err) {
                 this.error = 'Error comparing files: ' + (err.response?.data?.detail || err.message);
@@ -376,73 +311,6 @@ createApp({
             
             const inputs = document.querySelectorAll('input[type="file"]');
             inputs.forEach(input => input.value = '');
-        },
-        updated() {
-            if (this.has_active_session) {
-                this.setupScrollSync();
-            }
-        },
-        setupScrollSync() {
-            const panels = document.querySelectorAll('.diff-viewer .panel');
-            if (panels.length < 2) {
-                window.scrollSyncError = 'Not enough panels';
-                return;
-            }
-            
-            window.scrollSyncSetup = true;
-            let syncing = false;
-            
-            const updateScrollIndicators = () => {
-                const left = panels[0];
-                const topIndicator = document.querySelector('.scroll-indicator-top');
-                const bottomIndicator = document.querySelector('.scroll-indicator-bottom');
-                
-                if (topIndicator) {
-                    topIndicator.classList.toggle('visible', left.scrollTop > 10);
-                }
-                if (bottomIndicator) {
-                    const maxScroll = left.scrollHeight - left.clientHeight;
-                    bottomIndicator.classList.toggle('visible', left.scrollTop < maxScroll - 10);
-                }
-            };
-            
-            const handleScroll = (sourcePanel) => {
-                if (syncing) return;
-                
-                const source = panels[sourcePanel];
-                const sourceMaxScroll = source.scrollHeight - source.clientHeight;
-                if (sourceMaxScroll <= 0) return;
-                
-                const target = panels[sourcePanel === 0 ? 1 : 0];
-                const targetMaxScroll = target.scrollHeight - target.clientHeight;
-                
-                syncing = true;
-                
-                let scrollPct = source.scrollTop / sourceMaxScroll;
-                scrollPct = Math.max(0, Math.min(1, scrollPct));
-                
-                if (targetMaxScroll > 0) {
-                    target.scrollTop = scrollPct * targetMaxScroll;
-                }
-                
-                updateScrollIndicators();
-                setTimeout(() => { syncing = false; }, 50);
-            };
-            
-            panels[0].addEventListener('scroll', () => {
-                window.leftScrollFired = true;
-                handleScroll(0);
-            });
-            
-            panels[1].addEventListener('scroll', () => {
-                window.rightScrollFired = true;
-                handleScroll(1);
-            });
-            
-            window.syncLeftScroll = () => handleScroll(0);
-            window.syncRightScroll = () => handleScroll(1);
-            
-            setTimeout(updateScrollIndicators, 100);
         }
     }
 }).mount('#app');

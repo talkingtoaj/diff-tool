@@ -133,74 +133,98 @@ h1 {
 }
 
 .diff-viewer {
-    display: grid;
-    grid-template-columns: 1fr 60px 1fr;
-    gap: 10px;
     height: 600px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    overflow: hidden;
-}
-
-.panel {
     overflow-y: auto;
-    padding: 15px;
     background: white;
 }
 
-.panel-header {
-    font-weight: 600;
-    padding-bottom: 10px;
-    border-bottom: 2px solid #ddd;
-    margin-bottom: 15px;
-    color: #555;
+.diff-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.diff-table thead {
     position: sticky;
     top: 0;
+    z-index: 10;
     background: white;
 }
 
-.divider {
+.diff-table th {
+    padding: 10px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #555;
+    border-bottom: 2px solid #ddd;
+    background: white;
+}
+
+.diff-table th:first-child {
+    width: calc(50% - 30px);
+}
+
+.diff-table th:nth-child(2) {
+    width: 60px;
+}
+
+.diff-table th:last-child {
+    width: calc(50% - 30px);
+}
+
+.divider-header {
     background: #e9ecef;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 10px 5px;
-    overflow-y: scroll;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
 }
 
-.divider::-webkit-scrollbar {
-    display: none;
-}
-
-.copy-controls {
-    pointer-events: auto;
-}
-
-.panel-header-spacer {
-    height: 41px;
-    margin-bottom: 15px;
-}
-
-.block-row {
-    display: grid;
-    grid-template-columns: 1fr 60px 1fr;
-    gap: 10px;
-    min-height: 60px;
-    align-items: start;
-}
-
-.block {
+.diff-table td {
+    vertical-align: top;
     padding: 8px;
-    border-radius: 4px;
+    border-bottom: 1px solid #eee;
+}
+
+.block-cell {
     line-height: 1.6;
     white-space: pre-wrap;
 }
 
-.block.blank-block {
+.block-cell.unchanged {
+    background: transparent;
+}
+
+.block-cell.added {
+    background: #d4edda;
+    border-left: 3px solid #28a745;
+}
+
+.block-cell.removed {
+    background: #f8d7da;
+    border-left: 3px solid #dc3545;
+}
+
+.block-cell.changed {
+    background: #fff3cd;
+    border-left: 3px solid #ffc107;
+}
+
+.block-cell.copied {
+    background: #cce5ff;
+    border-left: 3px solid #007bff;
+    animation: flash 0.5s ease;
+}
+
+.block-cell.blank-block {
     background: transparent;
     border-left: none;
+}
+
+.divider-cell {
+    background: #e9ecef;
+    text-align: center;
+    padding: 8px 5px;
+    width: 60px;
+    min-width: 60px;
 }
 
 .sentence-placeholder {
