@@ -180,6 +180,7 @@ h1 {
     padding: 8px;
     border-radius: 4px;
     line-height: 1.6;
+    white-space: pre-wrap;
 }
 
 .block.unchanged {
@@ -249,8 +250,54 @@ h1 {
     color: white;
 }
 
+.scroll-indicator-top,
+.scroll-indicator-bottom {
+    display: none;
+    color: #adb5bd;
+    font-size: 12px;
+    text-align: center;
+    padding: 2px;
+    cursor: default;
+    transition: color 0.2s;
+}
+
+.scroll-indicator-top.visible,
+.scroll-indicator-bottom.visible {
+    display: block;
+}
+
+.scroll-indicator-top:hover,
+.scroll-indicator-bottom:hover {
+    color: #6c757d;
+}
+
 .empty-placeholder {
     text-align: center;
     color: #999;
     padding: 40px;
+}
+
+.word-diff {
+    line-height: 1.8;
+    white-space: pre-wrap;
+}
+
+.word-added {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1px 2px;
+    border-radius: 2px;
+    text-decoration: none;
+}
+
+.word-removed {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 1px 2px;
+    border-radius: 2px;
+    text-decoration: line-through;
+}
+
+.word-equal {
+    color: inherit;
 }
