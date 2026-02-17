@@ -183,6 +183,16 @@ h1 {
     white-space: pre-wrap;
 }
 
+.block.blank-block {
+    background: transparent;
+    border-left: none;
+}
+
+.sentence-placeholder {
+    min-height: 1.6em;
+    line-height: 1.6;
+}
+
 .block.unchanged {
     background: transparent;
 }

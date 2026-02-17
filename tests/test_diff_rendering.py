@@ -149,10 +149,57 @@ Another paragraph here."""
                 if len(text_lines) > 4:
                     ratio = len(text_lines) / max(len(unique_lines), 1)
                     assert ratio < 1.5, f"Content appears duplicated in changed block. Text: {block_text[:200]}..."
-                    
         finally:
             os.unlink(original_path)
             os.unlink(modified_path)
+
+    def test_block_line_synchronization(self, page: Page, base_url: str):
+        """Test that blocks with different sentence counts are synchronized with placeholder lines"""
+        page.goto(base_url)
+        
+        # Create files where one side has more sentences than the other
+        # This creates a 'removed' or 'added' block where line counts differ
+        original_content = """First line. Second line. Third line. Fourth line.
+Unchanged sentence here."""
+        
+        modified_content = """First line only.
+Unchanged sentence here."""
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f1:
+            f1.write(original_content)
+            original_path = f1.name
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f2:
+            f2.write(modified_content)
+            modified_path = f2.name
+        
+        try:
+            page.locator('input[type="file"]').first.set_input_files(original_path)
+            page.locator('input[type="file"]').nth(1).set_input_files(modified_path)
+            page.locator("button:has-text('Compare')").click()
+            
+            page.wait_for_selector(".diff-viewer", timeout=5000)
+            
+            # Check that sentence placeholders exist
+            placeholders = page.locator(".sentence-placeholder")
+            placeholder_count = placeholders.count()
+            
+            # We should have at least some placeholders if the sides have different line counts
+            assert placeholder_count > 0, "Should have placeholder lines to synchronize blocks"
+            
+            # Check that both panels have the same number of total sentence divs
+            # (including placeholders)
+            left_sentences = page.locator(".panel:first-child .block div")
+            right_sentences = page.locator(".panel:last-child .block div")
+            
+            # The total sentence count should be equal on both sides
+            assert left_sentences.count() == right_sentences.count(), \
+                "Both panels should have equal number of sentence elements (including placeholders)"
+                
+        finally:
+            os.unlink(original_path)
+            os.unlink(modified_path)
+
 
     
     def test_diff_viewer_shows_sentences(self, page: Page, base_url: str):

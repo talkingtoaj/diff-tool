@@ -114,8 +114,9 @@ createApp({
                     <div class="panel" @scroll="syncScroll($event, 'left')">
                         <div class="panel-header">Original</div>
                         <div v-for="(block, index) in originalBlocks" :key="'orig-' + index" 
-                             :class="['block', block.type]">
-                            <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex">
+                             :class="['block', block.type, { 'blank-block': block.isBlank }]">
+                            <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
+                                 :class="{ 'sentence-placeholder': sentence === '' }">
                                 {{ sentence }}
                             </div>
                         </div>
@@ -142,8 +143,9 @@ createApp({
                     <div class="panel" @scroll="syncScroll($event, 'right')">
                         <div class="panel-header">Modified</div>
                         <div v-for="(block, index) in modifiedBlocks" :key="'mod-' + index" 
-                             :class="['block', block.type]">
-                            <div v-for="(sentence, sIndex) in block.sentences" :key="'mod-s-' + index + '-' + sIndex">
+                             :class="['block', block.type, { 'blank-block': block.isBlank }]">
+                            <div v-for="(sentence, sIndex) in block.sentences" :key="'mod-s-' + index + '-' + sIndex"
+                                 :class="{ 'sentence-placeholder': sentence === '' }">
                                 {{ sentence }}
                             </div>
                         </div>
@@ -175,8 +177,9 @@ createApp({
                 });
                 
                 this.session_id = response.data.session_id;
-                this.originalBlocks = this.processBlocks(response.data.blocks, 'original');
-                this.modifiedBlocks = this.processBlocks(response.data.blocks, 'modified');
+                const synced = this.synchronizeBlockLines(response.data.blocks);
+                this.originalBlocks = synced.originalBlocks;
+                this.modifiedBlocks = synced.modifiedBlocks;
                 this.has_active_session = true;
                 this.undo_stack = [];
                 this.can_undo = false;
@@ -199,6 +202,40 @@ createApp({
                 sentences: side === 'original' ? block.original_sentences : block.modified_sentences
             }));
         },
+        synchronizeBlockLines(blocks) {
+            const originalBlocks = [];
+            const modifiedBlocks = [];
+            
+            blocks.forEach(block => {
+                const origSentences = block.original_sentences || [];
+                const modSentences = block.modified_sentences || [];
+                const maxLines = Math.max(origSentences.length, modSentences.length);
+                
+                const paddedOriginal = [...origSentences];
+                const paddedModified = [...modSentences];
+                
+                while (paddedOriginal.length < maxLines) {
+                    paddedOriginal.push('');
+                }
+                while (paddedModified.length < maxLines) {
+                    paddedModified.push('');
+                }
+                
+                originalBlocks.push({
+                    ...block,
+                    sentences: paddedOriginal,
+                    isBlank: origSentences.length === 0
+                });
+                
+                modifiedBlocks.push({
+                    ...block,
+                    sentences: paddedModified,
+                    isBlank: modSentences.length === 0
+                });
+            });
+            
+            return { originalBlocks, modifiedBlocks };
+        },
         saveStateToUndo() {
             this.undo_stack.push({
                 original: JSON.parse(JSON.stringify(this.originalBlocks)),
@@ -211,16 +248,34 @@ createApp({
         },
         handleCopyToOriginal(index) {
             this.saveStateToUndo();
+            const sourceSentences = this.modifiedBlocks[index].sentences.filter(s => s !== '');
+            const targetSentences = this.originalBlocks[index].sentences;
+            const maxLines = Math.max(sourceSentences.length, targetSentences.length);
+            const paddedSource = [...sourceSentences];
+            while (paddedSource.length < maxLines) {
+                paddedSource.push('');
+            }
             this.originalBlocks[index] = {
-                ...this.modifiedBlocks[index],
-                type: 'copied'
+                ...this.originalBlocks[index],
+                sentences: paddedSource,
+                type: 'copied',
+                isBlank: sourceSentences.length === 0
             };
         },
         handleCopyToModified(index) {
             this.saveStateToUndo();
+            const sourceSentences = this.originalBlocks[index].sentences.filter(s => s !== '');
+            const targetSentences = this.modifiedBlocks[index].sentences;
+            const maxLines = Math.max(sourceSentences.length, targetSentences.length);
+            const paddedSource = [...sourceSentences];
+            while (paddedSource.length < maxLines) {
+                paddedSource.push('');
+            }
             this.modifiedBlocks[index] = {
-                ...this.originalBlocks[index],
-                type: 'copied'
+                ...this.modifiedBlocks[index],
+                sentences: paddedSource,
+                type: 'copied',
+                isBlank: sourceSentences.length === 0
             };
         },
         undo() {
@@ -264,8 +319,8 @@ createApp({
             try {
                 const blocksForSave = this.originalBlocks.map((block, index) => ({
                     type: block.type,
-                    original_sentences: this.originalBlocks[index].sentences,
-                    modified_sentences: this.modifiedBlocks[index].sentences,
+                    original_sentences: this.originalBlocks[index].sentences.filter(s => s !== ''),
+                    modified_sentences: this.modifiedBlocks[index].sentences.filter(s => s !== ''),
                     original_start: index,
                     modified_start: index
                 }));
