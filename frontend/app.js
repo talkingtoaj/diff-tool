@@ -90,6 +90,7 @@ createApp({
                     
                     const source = event.target;
                     const panels = this.$el.querySelectorAll('.panel');
+                    const divider = this.$el.querySelector('.divider');
                     const targetIndex = sourcePanel === 'left' ? 1 : 0;
                     const target = panels[targetIndex];
                     
@@ -101,6 +102,14 @@ createApp({
                     const targetMaxScroll = target.scrollHeight - target.clientHeight;
                     target.scrollTop = scrollPct * targetMaxScroll;
                     
+                    // Sync divider scroll
+                    if (divider) {
+                        const dividerMaxScroll = divider.scrollHeight - divider.clientHeight;
+                        if (dividerMaxScroll > 0) {
+                            divider.scrollTop = scrollPct * dividerMaxScroll;
+                        }
+                    }
+                    
                     setTimeout(() => { this.isScrolling = false; }, 50);
                 }
             },
@@ -110,19 +119,20 @@ createApp({
                 panels[1].addEventListener('scroll', (e) => this.syncScroll(e, 'right'));
             },
             template: `
-                <div class="diff-viewer">
-                    <div class="panel" @scroll="syncScroll($event, 'left')">
+                <div class="diff-viewer" ref="diffViewer">
+                    <div class="panel" ref="leftPanel" @scroll="syncScroll($event, 'left')">
                         <div class="panel-header">Original</div>
                         <div v-for="(block, index) in originalBlocks" :key="'orig-' + index" 
                              :class="['block', block.type, { 'blank-block': block.isBlank }]">
                             <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
                                  :class="{ 'sentence-placeholder': sentence === '' }">
-                                {{ sentence }}
+                                <template v-if="sentence === ''">&nbsp;</template>
+                                <template v-else>{{ sentence }}</template>
                             </div>
                         </div>
                     </div>
-                    <div class="divider">
-                        <div class="scroll-indicator-top" title="More changes above">↑</div>
+                    <div class="divider" ref="dividerPanel">
+                        <div class="panel-header-spacer"></div>
                         <div v-for="(block, index) in originalBlocks" :key="'ctrl-' + index" 
                              class="copy-controls">
                             <button v-if="block.type === 'added' || block.type === 'changed'"
@@ -138,15 +148,15 @@ createApp({
                                 →
                             </button>
                         </div>
-                        <div class="scroll-indicator-bottom" title="More changes below">↓</div>
                     </div>
-                    <div class="panel" @scroll="syncScroll($event, 'right')">
+                    <div class="panel" ref="rightPanel" @scroll="syncScroll($event, 'right')">
                         <div class="panel-header">Modified</div>
                         <div v-for="(block, index) in modifiedBlocks" :key="'mod-' + index" 
                              :class="['block', block.type, { 'blank-block': block.isBlank }]">
                             <div v-for="(sentence, sIndex) in block.sentences" :key="'mod-s-' + index + '-' + sIndex"
                                  :class="{ 'sentence-placeholder': sentence === '' }">
-                                {{ sentence }}
+                                <template v-if="sentence === ''">&nbsp;</template>
+                                <template v-else>{{ sentence }}</template>
                             </div>
                         </div>
                     </div>

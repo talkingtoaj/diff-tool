@@ -165,7 +165,22 @@ h1 {
     flex-direction: column;
     gap: 10px;
     padding: 10px 5px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.divider::-webkit-scrollbar {
+    display: none;
+}
+
+.copy-controls {
+    pointer-events: auto;
+}
+
+.panel-header-spacer {
+    height: 41px;
+    margin-bottom: 15px;
 }
 
 .block-row {
