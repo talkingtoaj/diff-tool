@@ -56,7 +56,7 @@ E2E tests are created but currently have issues with file upload mechanism in Pl
 
 ### Current Status
 
-**Note:** E2E tests require the FastAPI server to be running on `http://localhost:8000`
+**Note:** E2E tests require the FastAPI server to be running on `http://localhost:8006`
 
 To run manually:
 ```bash

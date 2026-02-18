@@ -27,7 +27,7 @@ A simple FastAPI + Vue.js application for comparing text files with sentence-lev
 
 3. Open your browser and navigate to:
    ```
-   http://localhost:8000
+    http://localhost:8006
    ```
 
 ## Usage

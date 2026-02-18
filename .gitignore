@@ -1,0 +1,5 @@
+*.pyc
+backend/backups/
+backend/tmp/
+backups/
+tmp/

@@ -90,7 +90,7 @@ tmp/diff-tool/
 
 4. Open browser:
    ```
-   http://localhost:8000
+    http://localhost:8006
    ```
 
 ## Usage Flow

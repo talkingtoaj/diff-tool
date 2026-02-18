@@ -48,7 +48,9 @@ createApp({
             },
             emits: ['copy-to-original', 'copy-to-modified'],
             data() {
-                return {};
+                return {
+                    wordDiffCache: {}
+                };
             },
             methods: {
                 escapeHtml(text) {
@@ -56,33 +58,125 @@ createApp({
                     div.textContent = text;
                     return div.innerHTML;
                 },
-                renderWordDiff(block, side) {
-                    if (!block.word_diffs || this.highlightLevel !== 'word') {
-                        return null;
+                splitWords(text) {
+                    const words = [];
+                    let current = "";
+                    for (const char of text) {
+                        if (/\s/.test(char)) {
+                            if (current) {
+                                words.push(current);
+                                current = "";
+                            }
+                            if (char === '\n') {
+                                words.push('\n');
+                            }
+                        } else if ('.,;:!?()[]{}"\'-'.includes(char)) {
+                            if (current) {
+                                words.push(current);
+                                current = "";
+                            }
+                            words.push(char);
+                        } else {
+                            current += char;
+                        }
                     }
+                    if (current) words.push(current);
+                    return words;
+                },
+                computeWordDiff(origText, modText) {
+                    const origWords = this.splitWords(origText);
+                    const modWords = this.splitWords(modText);
                     
-                    const html = block.word_diffs.map(wd => {
-                        const words = side === 'original' ? wd.original : wd.modified;
-                        if (!words || words.length === 0) return '';
-                        
-                        const escaped = words.map(w => this.escapeHtml(w));
-                        
-                        if (wd.type === 'equal') {
-                            return `<span class="word-equal">${escaped.join(' ')}</span>`;
-                        } else if (wd.type === 'delete') {
-                            return `<span class="word-removed">${escaped.join(' ')}</span>`;
-                        } else if (wd.type === 'insert') {
-                            return `<span class="word-added">${escaped.join(' ')}</span>`;
-                        } else if (wd.type === 'replace') {
-                            if (side === 'original') {
-                                return `<span class="word-removed">${escaped.join(' ')}</span>`;
+                    // Simple LCS-based diff
+                    const diffs = [];
+                    let i = 0, j = 0;
+                    
+                    while (i < origWords.length || j < modWords.length) {
+                        if (i < origWords.length && j < modWords.length && origWords[i] === modWords[j]) {
+                            diffs.push({ type: 'equal', word: origWords[i] });
+                            i++;
+                            j++;
+                        } else {
+                            // Look ahead for match
+                            let origMatch = -1, modMatch = -1;
+                            for (let k = i; k < Math.min(i + 5, origWords.length); k++) {
+                                const idx = modWords.slice(j, j + 5).indexOf(origWords[k]);
+                                if (idx !== -1) {
+                                    origMatch = k;
+                                    modMatch = j + idx;
+                                    break;
+                                }
+                            }
+                            
+                            if (origMatch !== -1 && origMatch - i <= 3 && modMatch - j <= 3) {
+                                // Found match nearby, mark intermediate as changes
+                                while (i < origMatch) {
+                                    if (origWords[i] !== '\n') {
+                                        diffs.push({ type: 'removed', word: origWords[i] });
+                                    }
+                                    i++;
+                                }
+                                while (j < modMatch) {
+                                    if (modWords[j] !== '\n') {
+                                        diffs.push({ type: 'added', word: modWords[j] });
+                                    }
+                                    j++;
+                                }
+                            } else if (i < origWords.length && j < modWords.length) {
+                                if (origWords[i] !== '\n') {
+                                    diffs.push({ type: 'removed', word: origWords[i] });
+                                }
+                                if (modWords[j] !== '\n') {
+                                    diffs.push({ type: 'added', word: modWords[j] });
+                                }
+                                i++;
+                                j++;
+                            } else if (i < origWords.length) {
+                                if (origWords[i] !== '\n') {
+                                    diffs.push({ type: 'removed', word: origWords[i] });
+                                }
+                                i++;
                             } else {
-                                return `<span class="word-added">${escaped.join(' ')}</span>`;
+                                if (modWords[j] !== '\n') {
+                                    diffs.push({ type: 'added', word: modWords[j] });
+                                }
+                                j++;
                             }
                         }
-                        return escaped.join(' ');
-                    }).join(' ');
+                    }
+                    return diffs;
+                },
+                renderSentenceWordDiff(origSentence, modSentence, side) {
+                    if (!origSentence && !modSentence) return '';
+                    if (!origSentence) {
+                        return side === 'modified' ? `<span class="word-added">${this.escapeHtml(modSentence)}</span>` : '';
+                    }
+                    if (!modSentence) {
+                        return side === 'original' ? `<span class="word-removed">${this.escapeHtml(origSentence)}</span>` : '';
+                    }
+                    if (origSentence === modSentence) {
+                        return this.escapeHtml(origSentence);
+                    }
                     
+                    const cacheKey = `${origSentence}|||${modSentence}|||${side}`;
+                    if (this.wordDiffCache[cacheKey]) {
+                        return this.wordDiffCache[cacheKey];
+                    }
+                    
+                    const diffs = this.computeWordDiff(origSentence, modSentence);
+                    const html = diffs.map(d => {
+                        const escaped = this.escapeHtml(d.word);
+                        if (d.type === 'equal') return escaped;
+                        if (d.type === 'removed' && side === 'original') {
+                            return `<span class="word-removed">${escaped}</span>`;
+                        }
+                        if (d.type === 'added' && side === 'modified') {
+                            return `<span class="word-added">${escaped}</span>`;
+                        }
+                        return '';
+                    }).filter(h => h).join(' ');
+                    
+                    this.wordDiffCache[cacheKey] = html;
                     return html;
                 }
             },
@@ -99,16 +193,14 @@ createApp({
                         <tbody>
                             <tr v-for="(block, index) in originalBlocks" :key="'row-' + index">
                                 <td :class="['block-cell', block.type, { 'blank-block': block.isBlank }]">
-                                    <template v-if="highlightLevel === 'word' && block.word_diffs">
-                                        <div v-html="renderWordDiff(block, 'original')"></div>
-                                    </template>
-                                    <template v-else>
-                                        <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
-                                             :class="{ 'sentence-placeholder': sentence === '' }">
-                                            <template v-if="sentence === ''">&nbsp;</template>
-                                            <template v-else>{{ sentence }}</template>
-                                        </div>
-                                    </template>
+                                    <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
+                                         :class="{ 'sentence-placeholder': sentence === '' }">
+                                        <template v-if="sentence === ''">&nbsp;</template>
+                                        <template v-else-if="highlightLevel === 'word'">
+                                            <span v-html="renderSentenceWordDiff(sentence, modifiedBlocks[index]?.sentences?.[sIndex] || '', 'original')"></span>
+                                        </template>
+                                        <template v-else>{{ sentence }}</template>
+                                    </div>
                                 </td>
                                 <td class="divider-cell">
                                     <div class="copy-controls">
@@ -127,16 +219,14 @@ createApp({
                                     </div>
                                 </td>
                                 <td :class="['block-cell', modifiedBlocks[index]?.type, { 'blank-block': modifiedBlocks[index]?.isBlank }]">
-                                    <template v-if="highlightLevel === 'word' && modifiedBlocks[index]?.word_diffs">
-                                        <div v-html="renderWordDiff(modifiedBlocks[index], 'modified')"></div>
-                                    </template>
-                                    <template v-else>
-                                        <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
-                                             :class="{ 'sentence-placeholder': sentence === '' }">
-                                            <template v-if="sentence === ''">&nbsp;</template>
-                                            <template v-else>{{ sentence }}</template>
-                                        </div>
-                                    </template>
+                                    <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
+                                         :class="{ 'sentence-placeholder': sentence === '' }">
+                                        <template v-if="sentence === ''">&nbsp;</template>
+                                        <template v-else-if="highlightLevel === 'word'">
+                                            <span v-html="renderSentenceWordDiff(originalBlocks[index]?.sentences?.[sIndex] || '', sentence, 'modified')"></span>
+                                        </template>
+                                        <template v-else>{{ sentence }}</template>
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>

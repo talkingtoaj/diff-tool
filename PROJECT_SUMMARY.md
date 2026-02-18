@@ -42,7 +42,7 @@ cd /home/talkingtoaj/tmp/diff-tool
 .venv/bin/python backend/main.py
 
 # Open browser
-http://localhost:8000
+http://localhost:8006
 ```
 
 ## Running Tests
