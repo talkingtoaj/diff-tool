@@ -22,7 +22,8 @@ createApp({
             has_unsaved_changes: false,
             isLoading: false,
             isSaving: false,
-            error: null
+            error: null,
+            highlightLevel: 'off' // 'off', 'sentence', 'word'
         }
     },
     mounted() {
@@ -42,7 +43,8 @@ createApp({
         'diff-viewer': {
             props: {
                 originalBlocks: Array,
-                modifiedBlocks: Array
+                modifiedBlocks: Array,
+                highlightLevel: String
             },
             emits: ['copy-to-original', 'copy-to-modified'],
             data() {
@@ -53,6 +55,35 @@ createApp({
                     const div = document.createElement('div');
                     div.textContent = text;
                     return div.innerHTML;
+                },
+                renderWordDiff(block, side) {
+                    if (!block.word_diffs || this.highlightLevel !== 'word') {
+                        return null;
+                    }
+                    
+                    const html = block.word_diffs.map(wd => {
+                        const words = side === 'original' ? wd.original : wd.modified;
+                        if (!words || words.length === 0) return '';
+                        
+                        const escaped = words.map(w => this.escapeHtml(w));
+                        
+                        if (wd.type === 'equal') {
+                            return `<span class="word-equal">${escaped.join(' ')}</span>`;
+                        } else if (wd.type === 'delete') {
+                            return `<span class="word-removed">${escaped.join(' ')}</span>`;
+                        } else if (wd.type === 'insert') {
+                            return `<span class="word-added">${escaped.join(' ')}</span>`;
+                        } else if (wd.type === 'replace') {
+                            if (side === 'original') {
+                                return `<span class="word-removed">${escaped.join(' ')}</span>`;
+                            } else {
+                                return `<span class="word-added">${escaped.join(' ')}</span>`;
+                            }
+                        }
+                        return escaped.join(' ');
+                    }).join(' ');
+                    
+                    return html;
                 }
             },
             template: `
@@ -68,11 +99,16 @@ createApp({
                         <tbody>
                             <tr v-for="(block, index) in originalBlocks" :key="'row-' + index">
                                 <td :class="['block-cell', block.type, { 'blank-block': block.isBlank }]">
-                                    <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
-                                         :class="{ 'sentence-placeholder': sentence === '' }">
-                                        <template v-if="sentence === ''">&nbsp;</template>
-                                        <template v-else>{{ sentence }}</template>
-                                    </div>
+                                    <template v-if="highlightLevel === 'word' && block.word_diffs">
+                                        <div v-html="renderWordDiff(block, 'original')"></div>
+                                    </template>
+                                    <template v-else>
+                                        <div v-for="(sentence, sIndex) in block.sentences" :key="'orig-s-' + index + '-' + sIndex"
+                                             :class="{ 'sentence-placeholder': sentence === '' }">
+                                            <template v-if="sentence === ''">&nbsp;</template>
+                                            <template v-else>{{ sentence }}</template>
+                                        </div>
+                                    </template>
                                 </td>
                                 <td class="divider-cell">
                                     <div class="copy-controls">
@@ -91,11 +127,16 @@ createApp({
                                     </div>
                                 </td>
                                 <td :class="['block-cell', modifiedBlocks[index]?.type, { 'blank-block': modifiedBlocks[index]?.isBlank }]">
-                                    <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
-                                         :class="{ 'sentence-placeholder': sentence === '' }">
-                                        <template v-if="sentence === ''">&nbsp;</template>
-                                        <template v-else>{{ sentence }}</template>
-                                    </div>
+                                    <template v-if="highlightLevel === 'word' && modifiedBlocks[index]?.word_diffs">
+                                        <div v-html="renderWordDiff(modifiedBlocks[index], 'modified')"></div>
+                                    </template>
+                                    <template v-else>
+                                        <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
+                                             :class="{ 'sentence-placeholder': sentence === '' }">
+                                            <template v-if="sentence === ''">&nbsp;</template>
+                                            <template v-else>{{ sentence }}</template>
+                                        </div>
+                                    </template>
                                 </td>
                             </tr>
                         </tbody>

@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diff Tool</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
     <div id="app">
@@ -32,8 +32,16 @@
             <div v-if="has_active_session" class="diff-section">
                 <div class="toolbar">
                     <span v-if="has_unsaved_changes" class="unsaved-indicator">Unsaved changes</span>
+                    <div class="highlight-toggle">
+                        <label>Highlight:</label>
+                        <select v-model="highlightLevel" class="highlight-select">
+                            <option value="off">Off</option>
+                            <option value="word">Word Level</option>
+                        </select>
+                    </div>
                     <div class="toolbar-buttons">
-                        <button @click="undo" :disabled="!can_undo" class="btn secondary">Undo</button>
+                        <button @click="undo" :disabled="!can_undo" class="btn secondary" title="Ctrl+Z">Undo</button>
+                        <button @click="redo" :disabled="!can_redo" class="btn secondary" title="Ctrl+Y">Redo</button>
                         <button @click="saveChanges" :disabled="!has_unsaved_changes || isSaving" class="btn primary">
                             {{ isSaving ? 'Saving...' : 'Save Changes' }}
                         </button>
@@ -42,8 +50,10 @@
                 </div>
                 
                 <diff-viewer
-                    :original-blocks="original_blocks"
-                    :modified-blocks="modified_blocks"
+                    ref="diffViewer"
+                    :original-blocks="originalBlocks"
+                    :modified-blocks="modifiedBlocks"
+                    :highlight-level="highlightLevel"
                     @copy-to-original="handleCopyToOriginal"
                     @copy-to-modified="handleCopyToModified"
                 ></diff-viewer>
@@ -53,6 +63,6 @@
         </div>
     </div>
     
-    <script src="app.js"></script>
+    <script src="/static/app.js"></script>
 </body>
 </html>
