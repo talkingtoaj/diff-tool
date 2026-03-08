@@ -10,11 +10,11 @@ function ze(e) {
   return (n) => n in t;
 }
 const U = process.env.NODE_ENV !== "production" ? Object.freeze({}) : {}, Dt = process.env.NODE_ENV !== "production" ? Object.freeze([]) : [], Q = () => {
-}, ks = () => !1, Xt = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // uppercase letter
+}, Rs = () => !1, Xt = (e) => e.charCodeAt(0) === 111 && e.charCodeAt(1) === 110 && // uppercase letter
 (e.charCodeAt(2) > 122 || e.charCodeAt(2) < 97), bn = (e) => e.startsWith("onUpdate:"), X = Object.assign, No = (e, t) => {
   const n = e.indexOf(t);
   n > -1 && e.splice(n, 1);
-}, tr = Object.prototype.hasOwnProperty, F = (e, t) => tr.call(e, t), S = Array.isArray, at = (e) => Zt(e) === "[object Map]", $n = (e) => Zt(e) === "[object Set]", Go = (e) => Zt(e) === "[object Date]", A = (e) => typeof e == "function", G = (e) => typeof e == "string", Le = (e) => typeof e == "symbol", j = (e) => e !== null && typeof e == "object", Oo = (e) => (j(e) || A(e)) && A(e.then) && A(e.catch), Rs = Object.prototype.toString, Zt = (e) => Rs.call(e), wo = (e) => Zt(e).slice(8, -1), Fs = (e) => Zt(e) === "[object Object]", Do = (e) => G(e) && e !== "NaN" && e[0] !== "-" && "" + parseInt(e, 10) === e, Lt = /* @__PURE__ */ ze(
+}, tr = Object.prototype.hasOwnProperty, F = (e, t) => tr.call(e, t), S = Array.isArray, at = (e) => Zt(e) === "[object Map]", $n = (e) => Zt(e) === "[object Set]", Go = (e) => Zt(e) === "[object Date]", A = (e) => typeof e == "function", G = (e) => typeof e == "string", Le = (e) => typeof e == "symbol", j = (e) => e !== null && typeof e == "object", Oo = (e) => (j(e) || A(e)) && A(e.then) && A(e.catch), ks = Object.prototype.toString, Zt = (e) => ks.call(e), wo = (e) => Zt(e).slice(8, -1), Fs = (e) => Zt(e) === "[object Object]", Do = (e) => G(e) && e !== "NaN" && e[0] !== "-" && "" + parseInt(e, 10) === e, Lt = /* @__PURE__ */ ze(
   // the leading comma is intentional so empty string "" is also included
   ",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted"
 ), nr = /* @__PURE__ */ ze(
@@ -118,7 +118,7 @@ function en(e, t) {
 function vr(e, t) {
   return e.findIndex((n) => en(n, t));
 }
-const Hs = (e) => !!(e && e.__v_isRef === !0), wt = (e) => G(e) ? e : e == null ? "" : S(e) || j(e) && (e.toString === Rs || !A(e.toString)) ? Hs(e) ? wt(e.value) : JSON.stringify(e, Bs, 2) : String(e), Bs = (e, t) => Hs(t) ? Bs(e, t.value) : at(t) ? {
+const Hs = (e) => !!(e && e.__v_isRef === !0), wt = (e) => G(e) ? e : e == null ? "" : S(e) || j(e) && (e.toString === ks || !A(e.toString)) ? Hs(e) ? wt(e.value) : JSON.stringify(e, Bs, 2) : String(e), Bs = (e, t) => Hs(t) ? Bs(e, t.value) : at(t) ? {
   [`Map(${t.size})`]: [...t.entries()].reduce(
     (n, [o, s], i) => (n[qn(o, i) + " =>"] = s, n),
     {}
@@ -884,7 +884,7 @@ function Ar(e, t) {
     n[s] = Mr(s, e, t);
   }), n;
 }
-function kn(e, t) {
+function Rn(e, t) {
   const n = Ar(e, t);
   return (o, s, i) => s === "__v_isReactive" ? !e : s === "__v_isReadonly" ? e : s === "__v_raw" ? o : Reflect.get(
     F(n, s) && s in o ? n : o,
@@ -893,13 +893,13 @@ function kn(e, t) {
   );
 }
 const $r = {
-  get: /* @__PURE__ */ kn(!1, !1)
+  get: /* @__PURE__ */ Rn(!1, !1)
 }, Pr = {
-  get: /* @__PURE__ */ kn(!1, !0)
+  get: /* @__PURE__ */ Rn(!1, !0)
 }, Ir = {
-  get: /* @__PURE__ */ kn(!0, !1)
-}, kr = {
-  get: /* @__PURE__ */ kn(!0, !0)
+  get: /* @__PURE__ */ Rn(!0, !1)
+}, Rr = {
+  get: /* @__PURE__ */ Rn(!0, !0)
 };
 function Zo(e, t, n) {
   const o = /* @__PURE__ */ P(n);
@@ -911,7 +911,7 @@ function Zo(e, t, n) {
   }
 }
 const ni = /* @__PURE__ */ new WeakMap(), oi = /* @__PURE__ */ new WeakMap(), si = /* @__PURE__ */ new WeakMap(), ii = /* @__PURE__ */ new WeakMap();
-function Rr(e) {
+function kr(e) {
   switch (e) {
     case "Object":
     case "Array":
@@ -926,11 +926,11 @@ function Rr(e) {
   }
 }
 function Fr(e) {
-  return e.__v_skip || !Object.isExtensible(e) ? 0 : Rr(wo(e));
+  return e.__v_skip || !Object.isExtensible(e) ? 0 : kr(wo(e));
 }
 // @__NO_SIDE_EFFECTS__
 function To(e) {
-  return /* @__PURE__ */ He(e) ? e : Rn(
+  return /* @__PURE__ */ He(e) ? e : kn(
     e,
     !1,
     Vr,
@@ -940,7 +940,7 @@ function To(e) {
 }
 // @__NO_SIDE_EFFECTS__
 function jr(e) {
-  return Rn(
+  return kn(
     e,
     !1,
     Cr,
@@ -950,7 +950,7 @@ function jr(e) {
 }
 // @__NO_SIDE_EFFECTS__
 function fo(e) {
-  return Rn(
+  return kn(
     e,
     !0,
     Sr,
@@ -959,16 +959,16 @@ function fo(e) {
   );
 }
 // @__NO_SIDE_EFFECTS__
-function ke(e) {
-  return Rn(
+function Re(e) {
+  return kn(
     e,
     !0,
     Tr,
-    kr,
+    Rr,
     ii
   );
 }
-function Rn(e, t, n, o, s) {
+function kn(e, t, n, o, s) {
   if (!j(e))
     return process.env.NODE_ENV !== "production" && xe(
       `value cannot be made ${t ? "readonly" : "reactive"}: ${String(
@@ -1448,7 +1448,7 @@ function Ao(e, t) {
   }
   return e.set(t, n + 1), !1;
 }
-let Re = !1;
+let ke = !1;
 const hn = /* @__PURE__ */ new Map();
 process.env.NODE_ENV !== "production" && (Qt().__VUE_HMR_RUNTIME__ = {
   createRecord: Xn(hi),
@@ -1476,7 +1476,7 @@ function Dn(e) {
 function nl(e, t) {
   const n = mt.get(e);
   n && (n.initialDef.render = t, [...n.instances].forEach((o) => {
-    t && (o.render = t, Dn(o.type).render = t), o.renderCache = [], Re = !0, o.job.flags & 8 || o.update(), Re = !1;
+    t && (o.render = t, Dn(o.type).render = t), o.renderCache = [], ke = !0, o.job.flags & 8 || o.update(), ke = !1;
   }));
 }
 function ol(e, t) {
@@ -1488,7 +1488,7 @@ function ol(e, t) {
     const i = o[s], r = Dn(i.type);
     let l = hn.get(r);
     l || (r !== n.initialDef && es(r, t), hn.set(r, l = /* @__PURE__ */ new Set())), l.add(i), i.appContext.propsCache.delete(i.type), i.appContext.emitsCache.delete(i.type), i.appContext.optionsCache.delete(i.type), i.ceReload ? (l.add(i), i.ceReload(t.styles), l.delete(i)) : i.parent ? Fn(() => {
-      i.job.flags & 8 || (Re = !0, i.parent.update(), Re = !1, l.delete(i));
+      i.job.flags & 8 || (ke = !0, i.parent.update(), ke = !1, l.delete(i));
     }) : i.appContext.reload ? i.appContext.reload() : typeof window < "u" ? window.location.reload() : console.warn(
       "[HMR] Root or manually mounted instance modified. Full reload required."
     ), i.root.ce && i !== i.root && i.root.ce._removeChildStyle(r);
@@ -1513,20 +1513,20 @@ function Xn(e) {
     }
   };
 }
-let we, Rt = [], uo = !1;
+let we, kt = [], uo = !1;
 function nn(e, ...t) {
-  we ? we.emit(e, ...t) : uo || Rt.push({ event: e, args: t });
+  we ? we.emit(e, ...t) : uo || kt.push({ event: e, args: t });
 }
 function $o(e, t) {
   var n, o;
-  we = e, we ? (we.enabled = !0, Rt.forEach(({ event: s, args: i }) => we.emit(s, ...i)), Rt = []) : /* handle late devtools injection - only do this if we are in an actual */ /* browser environment to avoid the timer handle stalling test runner exit */ /* (#4815) */ typeof window < "u" && // some envs mock window but not fully
+  we = e, we ? (we.enabled = !0, kt.forEach(({ event: s, args: i }) => we.emit(s, ...i)), kt = []) : /* handle late devtools injection - only do this if we are in an actual */ /* browser environment to avoid the timer handle stalling test runner exit */ /* (#4815) */ typeof window < "u" && // some envs mock window but not fully
   window.HTMLElement && // also exclude jsdom
   // eslint-disable-next-line no-restricted-syntax
   !((o = (n = window.navigator) == null ? void 0 : n.userAgent) != null && o.includes("jsdom")) ? ((t.__VUE_DEVTOOLS_HOOK_REPLAY__ = t.__VUE_DEVTOOLS_HOOK_REPLAY__ || []).push((i) => {
     $o(i, t);
   }), setTimeout(() => {
-    we || (t.__VUE_DEVTOOLS_HOOK_REPLAY__ = null, uo = !0, Rt = []);
-  }, 3e3)) : (uo = !0, Rt = []);
+    we || (t.__VUE_DEVTOOLS_HOOK_REPLAY__ = null, uo = !0, kt = []);
+  }, 3e3)) : (uo = !0, kt = []);
 }
 function sl(e, t) {
   nn("app:init", e, t, {
@@ -1763,7 +1763,7 @@ function Ut(e, t, n, o, s = !1) {
     );
     return;
   }
-  const p = t && t.r, d = l.refs === U ? l.refs = {} : l.refs, a = l.setupState, g = /* @__PURE__ */ P(a), O = a === U ? ks : (x) => process.env.NODE_ENV !== "production" && (F(g, x) && !/* @__PURE__ */ ee(g[x]) && y(
+  const p = t && t.r, d = l.refs === U ? l.refs = {} : l.refs, a = l.setupState, g = /* @__PURE__ */ P(a), O = a === U ? Rs : (x) => process.env.NODE_ENV !== "production" && (F(g, x) && !/* @__PURE__ */ ee(g[x]) && y(
     `Template ref "${x}" used on a non-ref value. It will not work in the production build.`
   ), ts.has(g[x])) || ns(d, x) ? !1 : F(g, x), C = (x, Y) => !(process.env.NODE_ENV !== "production" && ts.has(x) || Y && ns(d, Y));
   if (p != null && p !== f) {
@@ -1810,7 +1810,7 @@ function os(e) {
 }
 Qt().requestIdleCallback;
 Qt().cancelIdleCallback;
-const Kt = (e) => !!e.type.__asyncLoader, ko = (e) => e.type.__isKeepAlive;
+const Kt = (e) => !!e.type.__asyncLoader, Ro = (e) => e.type.__isKeepAlive;
 function yl(e, t) {
   Ni(e, "a", t);
 }
@@ -1830,7 +1830,7 @@ function Ni(e, t, n = z) {
   if (jn(t, o, n), n) {
     let s = n.parent;
     for (; s && s.parent; )
-      ko(s.parent.vnode) && Ol(o, t, n, s), s = s.parent;
+      Ro(s.parent.vnode) && Ol(o, t, n, s), s = s.parent;
   }
 }
 function Ol(e, t, n, o) {
@@ -1874,10 +1874,10 @@ function Al(e, t = z) {
 }
 const $l = "components";
 function Pl(e, t) {
-  return kl($l, e, !0, t) || e;
+  return Rl($l, e, !0, t) || e;
 }
 const Il = /* @__PURE__ */ Symbol.for("v-ndc");
-function kl(e, t, n = !0, o = !1) {
+function Rl(e, t, n = !0, o = !1) {
   const s = re || z;
   if (s) {
     const i = s.type;
@@ -1947,10 +1947,10 @@ const ao = (e) => e ? Ji(e) ? Bn(e) : ao(e.parent) : null, gt = (
     $: (e) => e,
     $el: (e) => e.vnode.el,
     $data: (e) => e.data,
-    $props: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(e.props) : e.props,
-    $attrs: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(e.attrs) : e.attrs,
-    $slots: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(e.slots) : e.slots,
-    $refs: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(e.refs) : e.refs,
+    $props: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(e.props) : e.props,
+    $attrs: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(e.attrs) : e.attrs,
+    $slots: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(e.slots) : e.slots,
+    $refs: (e) => process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(e.refs) : e.refs,
     $parent: (e) => ao(e.parent),
     $root: (e) => ao(e.root),
     $host: (e) => e.ce,
@@ -1962,7 +1962,7 @@ const ao = (e) => e ? Ji(e) ? Bn(e) : ao(e.parent) : null, gt = (
     $nextTick: (e) => e.n || (e.n = fi.bind(e.proxy)),
     $watch: (e) => ml.bind(e)
   })
-), Ro = (e) => e === "_" || e === "$", eo = (e, t) => e !== U && !e.__isScriptSetup && F(e, t), wi = {
+), ko = (e) => e === "_" || e === "$", eo = (e, t) => e !== U && !e.__isScriptSetup && F(e, t), wi = {
   get({ _: e }, t) {
     if (t === "__v_skip")
       return !0;
@@ -2012,7 +2012,7 @@ const ao = (e) => e ? Ji(e) ? Bn(e) : ao(e.parent) : null, gt = (
       return a[t];
     process.env.NODE_ENV !== "production" && re && (!G(t) || // #1091 avoid internal isRef/isVNode checks on component instance leading
     // to infinite warning loop
-    t.indexOf("__v") !== 0) && (s !== U && Ro(t[0]) && F(s, t) ? y(
+    t.indexOf("__v") !== 0) && (s !== U && ko(t[0]) && F(s, t) ? y(
       `Property ${JSON.stringify(
         t
       )} must be accessed via $data because it starts with a reserved character ("$" or "_") and is not proxied on the render context.`
@@ -2043,7 +2043,7 @@ const ao = (e) => e ? Ji(e) ? Bn(e) : ao(e.parent) : null, gt = (
 process.env.NODE_ENV !== "production" && (wi.ownKeys = (e) => (y(
   "Avoid app logic that relies on enumerating keys on a component instance. The keys will be empty in production mode to avoid performance overhead."
 ), Reflect.ownKeys(e)));
-function Rl(e) {
+function kl(e) {
   const t = {};
   return Object.defineProperty(t, "_", {
     configurable: !0,
@@ -2078,7 +2078,7 @@ function jl(e) {
   const { ctx: t, setupState: n } = e;
   Object.keys(/* @__PURE__ */ P(n)).forEach((o) => {
     if (!n.__isScriptSetup) {
-      if (Ro(o[0])) {
+      if (ko(o[0])) {
         y(
           `setup() return property ${JSON.stringify(
             o
@@ -2145,78 +2145,78 @@ function Hl(e) {
     filters: Uo
   } = t, Qe = process.env.NODE_ENV !== "production" ? Ll() : null;
   if (process.env.NODE_ENV !== "production") {
-    const [k] = e.propsOptions;
-    if (k)
-      for (const I in k)
+    const [R] = e.propsOptions;
+    if (R)
+      for (const I in R)
         Qe("Props", I);
   }
   if (p && Bl(p, o, Qe), r)
-    for (const k in r) {
-      const I = r[k];
-      A(I) ? (process.env.NODE_ENV !== "production" ? Object.defineProperty(o, k, {
+    for (const R in r) {
+      const I = r[R];
+      A(I) ? (process.env.NODE_ENV !== "production" ? Object.defineProperty(o, R, {
         value: I.bind(n),
         configurable: !0,
         enumerable: !0,
         writable: !0
-      }) : o[k] = I.bind(n), process.env.NODE_ENV !== "production" && Qe("Methods", k)) : process.env.NODE_ENV !== "production" && y(
-        `Method "${k}" has type "${typeof I}" in the component definition. Did you reference the function correctly?`
+      }) : o[R] = I.bind(n), process.env.NODE_ENV !== "production" && Qe("Methods", R)) : process.env.NODE_ENV !== "production" && y(
+        `Method "${R}" has type "${typeof I}" in the component definition. Did you reference the function correctly?`
       );
     }
   if (s) {
     process.env.NODE_ENV !== "production" && !A(s) && y(
       "The data option must be a function. Plain object usage is no longer supported."
     );
-    const k = s.call(n, n);
-    if (process.env.NODE_ENV !== "production" && Oo(k) && y(
+    const R = s.call(n, n);
+    if (process.env.NODE_ENV !== "production" && Oo(R) && y(
       "data() returned a Promise - note data() cannot be async; If you intend to perform data fetching before component renders, use async setup() + <Suspense>."
-    ), !j(k))
+    ), !j(R))
       process.env.NODE_ENV !== "production" && y("data() should return an object.");
-    else if (e.data = /* @__PURE__ */ To(k), process.env.NODE_ENV !== "production")
-      for (const I in k)
-        Qe("Data", I), Ro(I[0]) || Object.defineProperty(o, I, {
+    else if (e.data = /* @__PURE__ */ To(R), process.env.NODE_ENV !== "production")
+      for (const I in R)
+        Qe("Data", I), ko(I[0]) || Object.defineProperty(o, I, {
           configurable: !0,
           enumerable: !0,
-          get: () => k[I],
+          get: () => R[I],
           set: Q
         });
   }
   if (po = !0, i)
-    for (const k in i) {
-      const I = i[k], Ce = A(I) ? I.bind(n, n) : A(I.get) ? I.get.bind(n, n) : Q;
-      process.env.NODE_ENV !== "production" && Ce === Q && y(`Computed property "${k}" has no getter.`);
+    for (const R in i) {
+      const I = i[R], Ce = A(I) ? I.bind(n, n) : A(I.get) ? I.get.bind(n, n) : Q;
+      process.env.NODE_ENV !== "production" && Ce === Q && y(`Computed property "${R}" has no getter.`);
       const Un = !A(I) && A(I.set) ? I.set.bind(n) : process.env.NODE_ENV !== "production" ? () => {
         y(
-          `Write operation failed: computed property "${k}" is readonly.`
+          `Write operation failed: computed property "${R}" is readonly.`
         );
-      } : Q, Tt = kc({
+      } : Q, Tt = Rc({
         get: Ce,
         set: Un
       });
-      Object.defineProperty(o, k, {
+      Object.defineProperty(o, R, {
         enumerable: !0,
         configurable: !0,
         get: () => Tt.value,
         set: (vt) => Tt.value = vt
-      }), process.env.NODE_ENV !== "production" && Qe("Computed", k);
+      }), process.env.NODE_ENV !== "production" && Qe("Computed", R);
     }
   if (l)
-    for (const k in l)
-      Di(l[k], o, n, k);
+    for (const R in l)
+      Di(l[R], o, n, R);
   if (f) {
-    const k = A(f) ? f.call(n) : f;
-    Reflect.ownKeys(k).forEach((I) => {
-      hl(I, k[I]);
+    const R = A(f) ? f.call(n) : f;
+    Reflect.ownKeys(R).forEach((I) => {
+      hl(I, R[I]);
     });
   }
   d && rs(d, e, "c");
-  function de(k, I) {
-    S(I) ? I.forEach((Ce) => k(Ce.bind(n))) : I && k(I.bind(n));
+  function de(R, I) {
+    S(I) ? I.forEach((Ce) => R(Ce.bind(n))) : I && R(I.bind(n));
   }
   if (de(wl, a), de(Dl, g), de(xl, O), de(Vl, C), de(yl, x), de(Nl, Y), de(Al, ie), de(Ml, te), de(Tl, ye), de(Sl, H), de(Oi, ve), de(Cl, ae), S(Ue))
     if (Ue.length) {
-      const k = e.exposed || (e.exposed = {});
+      const R = e.exposed || (e.exposed = {});
       Ue.forEach((I) => {
-        Object.defineProperty(k, I, {
+        Object.defineProperty(R, I, {
           get: () => n[I],
           set: (Ce) => n[I] = Ce,
           enumerable: !0
@@ -2368,7 +2368,7 @@ function Vi() {
   return {
     app: null,
     config: {
-      isNativeTag: ks,
+      isNativeTag: Rs,
       performance: !1,
       globalProperties: {},
       optionMergeStrategies: {},
@@ -2587,7 +2587,7 @@ function fs(e) {
           te,
           T,
           d,
-          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(a) : a,
+          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(a) : a,
           O,
           g,
           C
@@ -2597,16 +2597,16 @@ function fs(e) {
       const T = t;
       process.env.NODE_ENV !== "production" && l === a && Cn(), q = Oe(
         T.length > 1 ? T(
-          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(a) : a,
+          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(a) : a,
           process.env.NODE_ENV !== "production" ? {
             get attrs() {
-              return Cn(), /* @__PURE__ */ ke(l);
+              return Cn(), /* @__PURE__ */ Re(l);
             },
             slots: r,
             emit: f
           } : { attrs: l, slots: r, emit: f }
         ) : T(
-          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(a) : a,
+          process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(a) : a,
           null
         )
       ), H = t.props ? l : Xl(l);
@@ -2683,7 +2683,7 @@ const Xl = (e) => {
 }, us = (e) => e.shapeFlag & 7 || e.type === be;
 function Ql(e, t, n) {
   const { props: o, children: s, component: i } = e, { props: r, children: l, patchFlag: f } = t, p = i.emitsOptions;
-  if (process.env.NODE_ENV !== "production" && (s || l) && Re || t.dirs || t.transition)
+  if (process.env.NODE_ENV !== "production" && (s || l) && ke || t.dirs || t.transition)
     return !0;
   if (n && f >= 0) {
     if (f & 1024)
@@ -2732,7 +2732,7 @@ function tc(e, t, n, o = !1) {
   e.propsDefaults = /* @__PURE__ */ Object.create(null), Pi(e, t, s, i);
   for (const r in e.propsOptions[0])
     r in s || (s[r] = void 0);
-  process.env.NODE_ENV !== "production" && ki(t || {}, s, e), n ? e.props = o ? s : /* @__PURE__ */ jr(s) : e.type.props ? e.props = s : e.props = i, e.attrs = i;
+  process.env.NODE_ENV !== "production" && Ri(t || {}, s, e), n ? e.props = o ? s : /* @__PURE__ */ jr(s) : e.type.props ? e.props = s : e.props = i, e.attrs = i;
 }
 function nc(e) {
   for (; e; ) {
@@ -2799,7 +2799,7 @@ function oc(e, t, n, o) {
       for (const a in i)
         (!t || !F(t, a)) && (delete i[a], p = !0);
   }
-  p && Ie(e.attrs, "set", ""), process.env.NODE_ENV !== "production" && ki(t || {}, s, e);
+  p && Ie(e.attrs, "set", ""), process.env.NODE_ENV !== "production" && Ri(t || {}, s, e);
 }
 function Pi(e, t, n, o) {
   const [s, i] = e.propsOptions;
@@ -2918,7 +2918,7 @@ function ds(e) {
 function ic(e) {
   return e === null ? "null" : typeof e == "function" ? e.name || "" : typeof e == "object" && e.constructor && e.constructor.name || "";
 }
-function ki(e, t, n) {
+function Ri(e, t, n) {
   const o = /* @__PURE__ */ P(t), s = n.propsOptions[0], i = Object.keys(e).map((r) => ue(r));
   for (const r in s) {
     let l = s[r];
@@ -2926,7 +2926,7 @@ function ki(e, t, n) {
       r,
       o[r],
       l,
-      process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(o) : o,
+      process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(o) : o,
       !i.includes(r)
     );
   }
@@ -2993,7 +2993,7 @@ const jo = (e) => e === "_" || e === "_ctx" || e === "$stable", Lo = (e) => S(e)
     `Slot "${e}" invoked outside of the render function: this will not track dependencies used in the slot. Invoke the slot function inside the render function instead.`
   ), Lo(t(...s))), n);
   return o._c = !1, o;
-}, Ri = (e, t, n) => {
+}, ki = (e, t, n) => {
   const o = e._ctx;
   for (const s in e) {
     if (jo(s)) continue;
@@ -3009,7 +3009,7 @@ const jo = (e) => e === "_" || e === "_ctx" || e === "$stable", Lo = (e) => S(e)
     }
   }
 }, Fi = (e, t) => {
-  process.env.NODE_ENV !== "production" && !ko(e.vnode) && y(
+  process.env.NODE_ENV !== "production" && !Ro(e.vnode) && y(
     "Non-function value encountered for default slot. Prefer function slots for better performance."
   );
   const n = Lo(t);
@@ -3021,14 +3021,14 @@ const jo = (e) => e === "_" || e === "_ctx" || e === "$stable", Lo = (e) => S(e)
   const o = e.slots = Ai();
   if (e.vnode.shapeFlag & 32) {
     const s = t._;
-    s ? (mo(o, t, n), n && yn(o, "_", s, !0)) : Ri(t, o);
+    s ? (mo(o, t, n), n && yn(o, "_", s, !0)) : ki(t, o);
   } else t && Fi(e, t);
 }, pc = (e, t, n) => {
   const { vnode: o, slots: s } = e;
   let i = !0, r = U;
   if (o.shapeFlag & 32) {
     const l = t._;
-    l ? process.env.NODE_ENV !== "production" && Re ? (mo(s, t, n), Ie(e, "set", "$slots")) : n && l === 1 ? i = !1 : mo(s, t, n) : (i = !t.$stable, Ri(t, s)), r = t;
+    l ? process.env.NODE_ENV !== "production" && ke ? (mo(s, t, n), Ie(e, "set", "$slots")) : n && l === 1 ? i = !1 : mo(s, t, n) : (i = !t.$stable, ki(t, s)), r = t;
   } else t && (Fi(e, t), r = { default: 1 });
   if (i)
     for (const l in s)
@@ -3080,10 +3080,10 @@ function _c(e, t) {
     nextSibling: g,
     setScopeId: O = Q,
     insertStaticContent: C
-  } = e, x = (c, u, h, E = null, _ = null, m = null, w = void 0, N = null, b = process.env.NODE_ENV !== "production" && Re ? !1 : !!u.dynamicChildren) => {
+  } = e, x = (c, u, h, E = null, _ = null, m = null, w = void 0, N = null, b = process.env.NODE_ENV !== "production" && ke ? !1 : !!u.dynamicChildren) => {
     if (c === u)
       return;
-    c && !kt(c, u) && (E = cn(c), et(c, _, m, !0), c = null), u.patchFlag === -2 && (b = !1, u.dynamicChildren = null);
+    c && !Rt(c, u) && (E = cn(c), et(c, _, m, !0), c = null), u.patchFlag === -2 && (b = !1, u.dynamicChildren = null);
     const { type: v, ref: M, shapeFlag: D } = u;
     switch (v) {
       case on:
@@ -3241,9 +3241,9 @@ function _c(e, t) {
       "value" in M && i(b, "value", null, M.value, m), (v = M.onVnodeBeforeMount) && $e(v, E, c);
     }
     process.env.NODE_ENV !== "production" && (yn(b, "__vnode", c, !0), yn(b, "__vueParentComponent", E, !0)), $ && rt(c, null, E, "beforeMount");
-    const R = mc(_, V);
-    R && V.beforeEnter(b), o(b, u, h), ((v = M && M.onVnodeMounted) || R || $) && ge(() => {
-      v && $e(v, E, c), R && V.enter(b), $ && rt(c, null, E, "mounted");
+    const k = mc(_, V);
+    k && V.beforeEnter(b), o(b, u, h), ((v = M && M.onVnodeMounted) || k || $) && ge(() => {
+      v && $e(v, E, c), k && V.enter(b), $ && rt(c, null, E, "mounted");
     }, _);
   }, ie = (c, u, h, E, _) => {
     if (h && O(c, h), E)
@@ -3284,7 +3284,7 @@ function _c(e, t) {
     b |= c.patchFlag & 16;
     const D = c.props || U, V = u.props || U;
     let $;
-    if (h && lt(h, !1), ($ = V.onVnodeBeforeUpdate) && $e($, h, u, c), M && rt(u, c, h, "beforeUpdate"), h && lt(h, !0), process.env.NODE_ENV !== "production" && Re && (b = 0, w = !1, v = null), (D.innerHTML && V.innerHTML == null || D.textContent && V.textContent == null) && d(N, ""), v ? (Ze(
+    if (h && lt(h, !1), ($ = V.onVnodeBeforeUpdate) && $e($, h, u, c), M && rt(u, c, h, "beforeUpdate"), h && lt(h, !0), process.env.NODE_ENV !== "production" && ke && (b = 0, w = !1, v = null), (D.innerHTML && V.innerHTML == null || D.textContent && V.textContent == null) && d(N, ""), v ? (Ze(
       c.dynamicChildren,
       v,
       N,
@@ -3306,9 +3306,9 @@ function _c(e, t) {
       if (b & 16)
         Ne(N, D, V, h, _);
       else if (b & 2 && D.class !== V.class && i(N, "class", null, V.class, _), b & 4 && i(N, "style", D.style, V.style, _), b & 8) {
-        const R = u.dynamicProps;
-        for (let W = 0; W < R.length; W++) {
-          const K = R[W], pe = D[K], he = V[K];
+        const k = u.dynamicProps;
+        for (let W = 0; W < k.length; W++) {
+          const K = k[W], pe = D[K], he = V[K];
           (he !== pe || K === "value") && i(N, K, pe, he, _, h);
         }
       }
@@ -3326,7 +3326,7 @@ function _c(e, t) {
         // of the Fragment itself so it can move its children.
         (b.type === se || // - In the case of different nodes, there is going to be a replacement
         // which also requires the correct parent container
-        !kt(b, v) || // - In the case of a component, it could contain anything.
+        !Rt(b, v) || // - In the case of a component, it could contain anything.
         b.shapeFlag & 198) ? a(b.el) : (
           // In other cases, the parent container is not actually used so we
           // just pass the block element here to avoid a DOM parentNode call.
@@ -3368,7 +3368,7 @@ function _c(e, t) {
     const v = u.el = c ? c.el : l(""), M = u.anchor = c ? c.anchor : l("");
     let { patchFlag: D, dynamicChildren: V, slotScopeIds: $ } = u;
     process.env.NODE_ENV !== "production" && // #5523 dev root fragment may inherit directives
-    (Re || D & 2048) && (D = 0, b = !1, V = null), $ && (N = N ? N.concat($) : $), c == null ? (o(v, h, E), o(M, h, E), ae(
+    (ke || D & 2048) && (D = 0, b = !1, V = null), $ && (N = N ? N.concat($) : $), c == null ? (o(v, h, E), o(M, h, E), ae(
       // #10007
       // such fragment like `<></>` will be compiled into
       // a fragment which doesn't have a children.
@@ -3435,13 +3435,13 @@ function _c(e, t) {
       E,
       _
     );
-    if (process.env.NODE_ENV !== "production" && N.type.__hmrId && el(N), process.env.NODE_ENV !== "production" && (dn(c), bt(N, "mount")), ko(c) && (N.ctx.renderer = At), process.env.NODE_ENV !== "production" && bt(N, "init"), Cc(N, !1, w), process.env.NODE_ENV !== "production" && yt(N, "init"), process.env.NODE_ENV !== "production" && Re && (c.el = null), N.asyncDep) {
-      if (_ && _.registerDep(N, k, w), !c.el) {
+    if (process.env.NODE_ENV !== "production" && N.type.__hmrId && el(N), process.env.NODE_ENV !== "production" && (dn(c), bt(N, "mount")), Ro(c) && (N.ctx.renderer = At), process.env.NODE_ENV !== "production" && bt(N, "init"), Cc(N, !1, w), process.env.NODE_ENV !== "production" && yt(N, "init"), process.env.NODE_ENV !== "production" && ke && (c.el = null), N.asyncDep) {
+      if (_ && _.registerDep(N, R, w), !c.el) {
         const b = N.subTree = Fe(be);
         q(null, b, u, h), c.placeholder = b.el;
       }
     } else
-      k(
+      R(
         N,
         c,
         u,
@@ -3461,10 +3461,10 @@ function _c(e, t) {
         E.next = u, E.update();
     else
       u.el = c.el, E.vnode = u;
-  }, k = (c, u, h, E, _, m, w) => {
+  }, R = (c, u, h, E, _, m, w) => {
     const N = () => {
       if (c.isMounted) {
-        let { next: D, bu: V, u: $, parent: R, vnode: W } = c;
+        let { next: D, bu: V, u: $, parent: k, vnode: W } = c;
         {
           const Me = ji(c);
           if (Me) {
@@ -3477,7 +3477,7 @@ function _c(e, t) {
           }
         }
         let K = D, pe;
-        process.env.NODE_ENV !== "production" && dn(D || c.vnode), lt(c, !1), D ? (D.el = W.el, I(c, D, w)) : D = W, V && Nt(V), (pe = D.props && D.props.onVnodeBeforeUpdate) && $e(pe, R, D, W), lt(c, !0), process.env.NODE_ENV !== "production" && bt(c, "render");
+        process.env.NODE_ENV !== "production" && dn(D || c.vnode), lt(c, !1), D ? (D.el = W.el, I(c, D, w)) : D = W, V && Nt(V), (pe = D.props && D.props.onVnodeBeforeUpdate) && $e(pe, k, D, W), lt(c, !0), process.env.NODE_ENV !== "production" && bt(c, "render");
         const he = fs(c);
         process.env.NODE_ENV !== "production" && yt(c, "render");
         const Te = c.subTree;
@@ -3492,13 +3492,13 @@ function _c(e, t) {
           _,
           m
         ), process.env.NODE_ENV !== "production" && yt(c, "patch"), D.el = he.el, K === null && ec(c, he.el), $ && ge($, _), (pe = D.props && D.props.onVnodeUpdated) && ge(
-          () => $e(pe, R, D, W),
+          () => $e(pe, k, D, W),
           _
         ), process.env.NODE_ENV !== "production" && gi(c), process.env.NODE_ENV !== "production" && pn();
       } else {
         let D;
-        const { el: V, props: $ } = u, { bm: R, m: W, parent: K, root: pe, type: he } = c, Te = Kt(u);
-        lt(c, !1), R && Nt(R), !Te && (D = $ && $.onVnodeBeforeMount) && $e(D, K, u), lt(c, !0);
+        const { el: V, props: $ } = u, { bm: k, m: W, parent: K, root: pe, type: he } = c, Te = Kt(u);
+        lt(c, !1), k && Nt(k), !Te && (D = $ && $.onVnodeBeforeMount) && $e(D, K, u), lt(c, !0);
         {
           pe.ce && pe.ce._hasShadowRoot() && pe.ce._injectChildStyle(he), process.env.NODE_ENV !== "production" && bt(c, "render");
           const Me = c.subTree = fs(c);
@@ -3623,11 +3623,11 @@ function _c(e, t) {
     const M = u.length;
     let D = c.length - 1, V = M - 1;
     for (; v <= D && v <= V; ) {
-      const $ = c[v], R = u[v] = b ? Je(u[v]) : Oe(u[v]);
-      if (kt($, R))
+      const $ = c[v], k = u[v] = b ? Je(u[v]) : Oe(u[v]);
+      if (Rt($, k))
         x(
           $,
-          R,
+          k,
           h,
           null,
           _,
@@ -3641,11 +3641,11 @@ function _c(e, t) {
       v++;
     }
     for (; v <= D && v <= V; ) {
-      const $ = c[D], R = u[V] = b ? Je(u[V]) : Oe(u[V]);
-      if (kt($, R))
+      const $ = c[D], k = u[V] = b ? Je(u[V]) : Oe(u[V]);
+      if (Rt($, k))
         x(
           $,
-          R,
+          k,
           h,
           null,
           _,
@@ -3660,13 +3660,13 @@ function _c(e, t) {
     }
     if (v > D) {
       if (v <= V) {
-        const $ = V + 1, R = $ < M ? u[$].el : E;
+        const $ = V + 1, k = $ < M ? u[$].el : E;
         for (; v <= V; )
           x(
             null,
             u[v] = b ? Je(u[v]) : Oe(u[v]),
             h,
-            R,
+            k,
             _,
             m,
             w,
@@ -3678,8 +3678,8 @@ function _c(e, t) {
       for (; v <= D; )
         et(c[v], _, m, !0), v++;
     else {
-      const $ = v, R = v, W = /* @__PURE__ */ new Map();
-      for (v = R; v <= V; v++) {
+      const $ = v, k = v, W = /* @__PURE__ */ new Map();
+      for (v = k; v <= V; v++) {
         const le = u[v] = b ? Je(u[v]) : Oe(u[v]);
         le.key != null && (process.env.NODE_ENV !== "production" && W.has(le.key) && y(
           "Duplicate keys found during update:",
@@ -3688,7 +3688,7 @@ function _c(e, t) {
         ), W.set(le.key, v));
       }
       let K, pe = 0;
-      const he = V - R + 1;
+      const he = V - k + 1;
       let Te = !1, Me = 0;
       const $t = new Array(he);
       for (v = 0; v < he; v++) $t[v] = 0;
@@ -3702,12 +3702,12 @@ function _c(e, t) {
         if (le.key != null)
           Ae = W.get(le.key);
         else
-          for (K = R; K <= V; K++)
-            if ($t[K - R] === 0 && kt(le, u[K])) {
+          for (K = k; K <= V; K++)
+            if ($t[K - k] === 0 && Rt(le, u[K])) {
               Ae = K;
               break;
             }
-        Ae === void 0 ? et(le, _, m, !0) : ($t[Ae - R] = v + 1, Ae >= Me ? Me = Ae : Te = !0, x(
+        Ae === void 0 ? et(le, _, m, !0) : ($t[Ae - k] = v + 1, Ae >= Me ? Me = Ae : Te = !0, x(
           le,
           u[Ae],
           h,
@@ -3721,7 +3721,7 @@ function _c(e, t) {
       }
       const Wo = Te ? vc($t) : Dt;
       for (K = Wo.length - 1, v = he - 1; v >= 0; v--) {
-        const le = R + v, Ae = u[le], qo = u[le + 1], Jo = le + 1 < M ? (
+        const le = k + v, Ae = u[le], qo = u[le + 1], Jo = le + 1 < M ? (
           // #13559, #14173 fallback to el placeholder for unresolved async component
           qo.el || Li(qo)
         ) : E;
@@ -3767,17 +3767,17 @@ function _c(e, t) {
       if (E === 0)
         N.beforeEnter(m), o(m, u, h), ge(() => N.enter(m), _);
       else {
-        const { leave: D, delayLeave: V, afterLeave: $ } = N, R = () => {
+        const { leave: D, delayLeave: V, afterLeave: $ } = N, k = () => {
           c.ctx.isUnmounted ? s(m) : o(m, u, h);
         }, W = () => {
           m._isLeaving && m[bl](
             !0
             /* cancelled */
           ), D(m, () => {
-            R(), $ && $();
+            k(), $ && $();
           });
         };
-        V ? V(m, R, W) : W();
+        V ? V(m, k, W) : W();
       }
     else
       o(m, u, h);
@@ -3797,7 +3797,7 @@ function _c(e, t) {
       u.ctx.deactivate(c);
       return;
     }
-    const R = M & 1 && V, W = !Kt(c);
+    const k = M & 1 && V, W = !Kt(c);
     let K;
     if (W && (K = w && w.onVnodeBeforeUnmount) && $e(K, u, c), M & 6)
       er(c.component, h, E);
@@ -3806,7 +3806,7 @@ function _c(e, t) {
         c.suspense.unmount(h, E);
         return;
       }
-      R && rt(c, null, u, "beforeUnmount"), M & 64 ? c.type.remove(
+      k && rt(c, null, u, "beforeUnmount"), M & 64 ? c.type.remove(
         c,
         u,
         h,
@@ -3826,8 +3826,8 @@ function _c(e, t) {
         !0
       ) : (m === se && D & 384 || !_ && M & 16) && Mt(b, u, h), E && Kn(c);
     }
-    (W && (K = w && w.onVnodeUnmounted) || R) && ge(() => {
-      K && $e(K, u, c), R && rt(c, null, u, "unmounted");
+    (W && (K = w && w.onVnodeUnmounted) || k) && ge(() => {
+      K && $e(K, u, c), k && rt(c, null, u, "unmounted");
     }, h);
   }, Kn = (c) => {
     const { type: u, el: h, anchor: E, transition: _ } = c;
@@ -4002,7 +4002,7 @@ function yc(e, t, n, o, s) {
 function Hn(e) {
   return e ? e.__v_isVNode === !0 : !1;
 }
-function kt(e, t) {
+function Rt(e, t) {
   if (process.env.NODE_ENV !== "production" && t.shapeFlag & 6 && e.component) {
     const n = hn.get(t.type);
     if (n && n.has(e.component))
@@ -4285,7 +4285,7 @@ function Vc(e, t, n) {
     ec: null,
     sp: null
   };
-  return process.env.NODE_ENV !== "production" ? i.ctx = Rl(i) : i.ctx = { _: i }, i.root = t ? t.root : i, i.emit = Yl.bind(null, i), e.ce && e.ce(i), i;
+  return process.env.NODE_ENV !== "production" ? i.ctx = kl(i) : i.ctx = { _: i }, i.root = t ? t.root : i, i.emit = Yl.bind(null, i), e.ce && e.ce(i), i;
 }
 let z = null;
 const qi = () => z || re;
@@ -4355,7 +4355,7 @@ function Tc(e, t) {
       e,
       0,
       [
-        process.env.NODE_ENV !== "production" ? /* @__PURE__ */ ke(e.props) : e.props,
+        process.env.NODE_ENV !== "production" ? /* @__PURE__ */ Re(e.props) : e.props,
         s
       ]
     ), l = Oo(r);
@@ -4493,7 +4493,7 @@ function rn(e, t, n = !1) {
 function Yi(e) {
   return A(e) && "__vccOpts" in e;
 }
-const kc = (e, t) => {
+const Rc = (e, t) => {
   const n = /* @__PURE__ */ Kr(e, t, zt);
   if (process.env.NODE_ENV !== "production") {
     const o = qi();
@@ -4501,7 +4501,7 @@ const kc = (e, t) => {
   }
   return n;
 };
-function Rc() {
+function kc() {
   if (process.env.NODE_ENV === "production" || typeof window > "u")
     return;
   const e = { style: "color:#3ba776" }, t = { style: "color:#1677ff" }, n = { style: "color:#f5222d" }, o = { style: "color:#eb2f96" }, s = {
@@ -5007,7 +5007,7 @@ function df(e) {
 * @license MIT
 **/
 function pf() {
-  Rc();
+  kc();
 }
 process.env.NODE_ENV !== "production" && pf();
 const Zi = (e, t) => {
@@ -5178,7 +5178,11 @@ const xf = /* @__PURE__ */ Zi(hf, [["render", Df]]), Vf = {
     rightLabel: { type: String, default: "Modified" },
     highlightLevel: { type: String, default: "off" },
     onSave: { type: Function, required: !0 },
-    onCancel: { type: Function, required: !0 }
+    onCancel: { type: Function, required: !0 },
+    getStateRef: { type: Object, default: null }
+  },
+  mounted() {
+    this.getStateRef && typeof this.getStateRef == "object" && (this.getStateRef.getBlocks = () => this.buildBlocksForSave()), document.addEventListener("keydown", this.onKeydown);
   },
   data() {
     const e = this.synchronizeBlockLines(this.initialBlocks);
@@ -5194,11 +5198,8 @@ const xf = /* @__PURE__ */ Zi(hf, [["render", Df]]), Vf = {
       highlightLevel: this.highlightLevel || "off"
     };
   },
-  mounted() {
-    document.addEventListener("keydown", this.onKeydown);
-  },
   beforeUnmount() {
-    document.removeEventListener("keydown", this.onKeydown);
+    this.getStateRef && typeof this.getStateRef == "object" && (this.getStateRef.getBlocks = void 0), document.removeEventListener("keydown", this.onKeydown);
   },
   methods: {
     onKeydown(e) {
@@ -5295,7 +5296,7 @@ const xf = /* @__PURE__ */ Zi(hf, [["render", Df]]), Vf = {
   key: 0,
   class: "diff-tool-viewer__unsaved"
 }, Mf = { class: "diff-tool-viewer__highlight" }, Af = { class: "diff-tool-viewer__toolbar-btns" }, $f = ["disabled"], Pf = ["disabled"], If = ["disabled"];
-function kf(e, t, n, o, s, i) {
+function Rf(e, t, n, o, s, i) {
   const r = Pl("DiffViewer");
   return ne(), oe("div", Sf, [
     J("div", Cf, [
@@ -5351,10 +5352,10 @@ function kf(e, t, n, o, s, i) {
     }, null, 8, ["original-blocks", "modified-blocks", "highlight-level", "left-label", "right-label", "onCopyToOriginal", "onCopyToModified"])
   ]);
 }
-const Rf = /* @__PURE__ */ Zi(Vf, [["render", kf]]);
+const kf = /* @__PURE__ */ Zi(Vf, [["render", Rf]]);
 function Ff(e, t) {
   var o, s;
-  const n = cf(Rf, {
+  const n = cf(kf, {
     initialBlocks: t.blocks || [],
     originalText: t.originalText,
     modifiedText: t.modifiedText,
@@ -5362,7 +5363,8 @@ function Ff(e, t) {
     rightLabel: ((s = t.labels) == null ? void 0 : s.right) ?? "Modified",
     highlightLevel: t.highlightLevel ?? "off",
     onSave: t.onSave,
-    onCancel: t.onCancel
+    onCancel: t.onCancel,
+    getStateRef: t.getStateRef ?? null
   });
   return n.mount(e), {
     unmount() {

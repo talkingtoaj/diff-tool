@@ -45,6 +45,13 @@ export default {
     highlightLevel: { type: String, default: 'off' },
     onSave: { type: Function, required: true },
     onCancel: { type: Function, required: true },
+    getStateRef: { type: Object, default: null },
+  },
+  mounted() {
+    if (this.getStateRef && typeof this.getStateRef === 'object') {
+      this.getStateRef.getBlocks = () => this.buildBlocksForSave();
+    }
+    document.addEventListener('keydown', this.onKeydown);
   },
   data() {
     const synced = this.synchronizeBlockLines(this.initialBlocks);
@@ -60,10 +67,10 @@ export default {
       highlightLevel: this.highlightLevel || 'off',
     };
   },
-  mounted() {
-    document.addEventListener('keydown', this.onKeydown);
-  },
   beforeUnmount() {
+    if (this.getStateRef && typeof this.getStateRef === 'object') {
+      this.getStateRef.getBlocks = undefined;
+    }
     document.removeEventListener('keydown', this.onKeydown);
   },
   methods: {

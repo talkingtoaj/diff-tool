@@ -75,6 +75,7 @@ const instance = mount(containerElement, {
   onCancel() {
     // close modal / discard
   },
+  getStateRef: {},  // optional: viewer sets getStateRef.getBlocks = () => current blocks. Host "Apply" can call getStateRef.getBlocks() then reconstruct to apply current state (including copy/undo edits).
 });
 
 // When closing the viewer:

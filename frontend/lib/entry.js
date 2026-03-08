@@ -18,6 +18,7 @@ import './viewer.css';
  * @param {'off'|'sentence'|'word'} [options.highlightLevel='off'] - Highlight level.
  * @param {(result: { blocks: Array }) => void} options.onSave - Called when user clicks Save. Result.blocks can be passed to DiffService.reconstruct_from_blocks(blocks, 'modified').
  * @param {() => void} options.onCancel - Called when user clicks Cancel.
+ * @param {{ getBlocks?: () => Array }} [options.getStateRef] - If provided, the viewer will set getStateRef.getBlocks = () => current blocks (same shape as onSave). Host can call getStateRef.getBlocks() when applying (e.g. host "Apply" button) to get current state including user copy/undo edits.
  * @returns {{ unmount: () => void }} - Call unmount() when closing the viewer (e.g. when closing the modal).
  */
 export function mount(container, options) {
@@ -30,6 +31,7 @@ export function mount(container, options) {
     highlightLevel: options.highlightLevel ?? 'off',
     onSave: options.onSave,
     onCancel: options.onCancel,
+    getStateRef: options.getStateRef ?? null,
   });
   app.mount(container);
   return {
