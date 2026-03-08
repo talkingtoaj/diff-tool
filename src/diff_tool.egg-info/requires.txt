@@ -1,0 +1,11 @@
+
+[backend]
+fastapi
+uvicorn
+python-multipart
+httpx
+
+[dev]
+pytest
+playwright
+pytest-playwright

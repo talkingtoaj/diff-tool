@@ -1,34 +1,31 @@
 # Diff Tool
 
-A simple FastAPI + Vue.js application for comparing text files with sentence-level diff visualization and copy functionality.
+A simple FastAPI + Vue.js application for comparing text files with sentence-level diff visualization and copy functionality. The core diff algorithm and the Vue diff viewer can also be used as a **library** by other apps (see [CONTRACT.md](CONTRACT.md)).
 
 ## Features
 
 - Side-by-side file comparison
 - Sentence-level diff detection
 - Copy sections between original and modified files
-- Undo functionality
+- Undo/redo, Save/Cancel
 - Automatic backup creation before modifications
-- Centralized backup folder
+- **Consumable as a dependency:** Python package (`diff_tool`) and embeddable Vue viewer library
 
-## Setup
+## Setup (standalone app)
 
-1. Install Python dependencies:
+1. From the repo root, install the package and backend dependencies:
    ```bash
-   cd backend
-   pip install -r requirements.txt
+   uv pip install -e .
+   uv pip install -r backend/requirements.txt
    ```
 
-2. Run the FastAPI server:
+2. Run the FastAPI server (from repo root so `diff_tool` is importable):
    ```bash
-   cd backend
-   uv run python main.py
+   uv run python backend/main.py
    ```
+   Or: `uv run uvicorn backend.main:app --host 0.0.0.0 --port 8006`
 
-3. Open your browser and navigate to:
-   ```
-    http://localhost:8006
-   ```
+3. Open your browser: http://localhost:8006
 
 ## Usage
 
@@ -49,3 +46,10 @@ All backups are stored in the `backups/` directory with the format:
 ## Temporary Files
 
 Session temporary files are stored in `tmp/<session_id>/` and are manually cleaned up when you cancel a session.
+
+## Using diff-tool as a dependency
+
+**Git repo:** [https://github.com/talkingtoaj/diff-tool](https://github.com/talkingtoaj/diff-tool)
+
+- **Python:** Install from the git repo with `uv add git+https://github.com/talkingtoaj/diff-tool.git` or `pip install git+https://github.com/talkingtoaj/diff-tool.git`, or locally with `uv add /path/to/diff-tool` / `pip install -e /path/to/diff-tool`. Then `from diff_tool import DiffService`. See [CONTRACT.md](CONTRACT.md) for the block shape and `reconstruct_from_blocks` behavior.
+- **Frontend:** Build the viewer library with `cd frontend && npm run build:lib`, then load `dist/diff-tool-viewer.js` and `dist/style.css` in your app and call `DiffTool.mount(container, options)` as documented in CONTRACT.md.

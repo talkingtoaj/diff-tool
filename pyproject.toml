@@ -1,0 +1,27 @@
+[project]
+name = "diff-tool"
+version = "0.1.0"
+description = "Sentence-level diff algorithm and block reconstruction; consumable as a library or with the standalone FastAPI + Vue app."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+backend = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "httpx",
+]
+dev = [
+    "pytest",
+    "playwright",
+    "pytest-playwright",
+]
+
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]

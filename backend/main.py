@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from file_service import FileService
-from diff_service import DiffService
+from diff_tool import DiffService
 
 
 class DiffBlock(BaseModel):
@@ -22,11 +22,16 @@ class DiffBlock(BaseModel):
     modified_sentences: List[str]
     original_start: int
     modified_start: int
+    word_diffs: Optional[List] = None
+
+
+class FromTextRequest(BaseModel):
+    original: str
+    modified: str
 
 
 app = FastAPI()
 file_service = FileService()
-diff_service = DiffService()
 sessions: Dict[str, Dict] = {}
 
 
@@ -80,7 +85,7 @@ async def start_diff(
     original_text = file_service.read_file(session_data["temp_original"])
     modified_text = file_service.read_file(session_data["temp_modified"])
     
-    blocks = diff_service.generate_diff(original_text, modified_text)
+    blocks = DiffService.generate_diff(original_text, modified_text)
     
     sessions[session_id] = {
         **session_data,
@@ -106,7 +111,7 @@ async def save_changes(session_id: str, blocks: List[DiffBlock]):
     
     # Convert Pydantic models to dicts for the diff service
     blocks_dict = [block.model_dump() for block in blocks]
-    modified_text = diff_service.reconstruct_from_blocks(blocks_dict, 'modified')
+    modified_text = DiffService.reconstruct_from_blocks(blocks_dict, 'modified')
     
     file_service.write_file(session["temp_modified"], modified_text)
     file_service.save_to_original(session["temp_modified"], session["modified_path"])
@@ -115,6 +120,19 @@ async def save_changes(session_id: str, blocks: List[DiffBlock]):
     session["blocks"] = blocks_dict
     
     return {"success": True}
+
+
+@app.post("/api/diff/from-text")
+async def diff_from_text(body: FromTextRequest):
+    """Text-in, blocks-out API: no file upload. Returns blocks and texts for embedding consumers."""
+    original_text = body.original
+    modified_text = body.modified
+    blocks = DiffService.generate_diff(original_text, modified_text)
+    return {
+        "blocks": blocks,
+        "original_text": original_text,
+        "modified_text": modified_text,
+    }
 
 
 @app.delete("/api/diff/{session_id}")

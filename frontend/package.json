@@ -1,0 +1,25 @@
+{
+  "name": "diff-tool-viewer",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./dist/diff-tool-viewer.umd.cjs",
+  "module": "./dist/diff-tool-viewer.js",
+  "exports": {
+    ".": {
+      "import": "./dist/diff-tool-viewer.js",
+      "require": "./dist/diff-tool-viewer.umd.cjs"
+    },
+    "./style.css": "./dist/style.css"
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build:lib": "vite build --config vite.lib.config.js"
+  },
+  "dependencies": {
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.0"
+  }
+}

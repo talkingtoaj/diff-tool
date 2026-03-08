@@ -147,3 +147,20 @@ And another sentence."""
         
         blocks = response.json()["blocks"]
         assert all(block["type"] == "unchanged" for block in blocks)
+
+    def test_diff_from_text(self, client):
+        """POST /api/diff/from-text returns blocks and texts (no file upload)."""
+        response = client.post(
+            "/api/diff/from-text",
+            json={"original": "Hello. World.", "modified": "Hello. Changed."},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert "blocks" in data
+        assert data["original_text"] == "Hello. World."
+        assert data["modified_text"] == "Hello. Changed."
+        blocks = data["blocks"]
+        assert len(blocks) >= 1
+        assert blocks[0]["type"] == "unchanged"
+        assert blocks[0]["original_sentences"] == ["Hello."]
+        assert any(b["type"] == "changed" for b in blocks)

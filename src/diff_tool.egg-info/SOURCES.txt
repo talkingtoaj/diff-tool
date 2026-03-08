@@ -1,0 +1,14 @@
+README.md
+pyproject.toml
+src/diff_tool/__init__.py
+src/diff_tool/diff_service.py
+src/diff_tool.egg-info/PKG-INFO
+src/diff_tool.egg-info/SOURCES.txt
+src/diff_tool.egg-info/dependency_links.txt
+src/diff_tool.egg-info/requires.txt
+src/diff_tool.egg-info/top_level.txt
+tests/test_api.py
+tests/test_backend.py
+tests/test_diff_rendering.py
+tests/test_e2e.py
+tests/test_scroll_sync.py

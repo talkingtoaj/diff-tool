@@ -81,10 +81,12 @@ def before_all():
     import subprocess
     import time
     import sys
-    
-    # Change to diff-tool directory
+    from pathlib import Path
+
+    # Change to repo root (parent of tests/)
+    repo_root = Path(__file__).resolve().parent.parent
     original_dir = os.getcwd()
-    os.chdir("/home/talkingtoaj/diff-tool")
+    os.chdir(repo_root)
     
     # Start FastAPI server
     server_process = subprocess.Popen(

@@ -6,7 +6,7 @@ from playwright.sync_api import Page, expect
 
 @pytest.fixture(scope="session")
 def base_url():
-    return "http://localhost:8000"
+    return "http://localhost:8006"
 
 
 class TestDiffRendering:
@@ -73,8 +73,8 @@ Third sentence here."""
             """)
             print(f"Vue data: {vue_data}")
             
-            # Check that blocks have content
-            blocks = page.locator(".block")
+            # Check that blocks have content (app uses .block-cell for table cells)
+            blocks = page.locator(".block-cell")
             print(f"Number of blocks found: {blocks.count()}")
             
             # Verify at least some content is visible
@@ -124,12 +124,9 @@ Another paragraph here."""
             
             page.wait_for_selector(".diff-viewer", timeout=5000)
             
-            # Check that word-diff sections don't exist (they were causing duplication)
-            word_diffs = page.locator(".word-diff")
-            assert word_diffs.count() == 0, "word-diff sections should not exist (they duplicate content)"
-            
-            # Get all changed blocks
-            changed_blocks = page.locator(".block.changed")
+            # Word-level diff is inline (word-added, word-removed spans), no separate .word-diff section
+            # Get all changed blocks (app uses .block-cell)
+            changed_blocks = page.locator(".block-cell.changed")
             count = changed_blocks.count()
             assert count > 0, "Should have at least one changed block"
             
@@ -187,12 +184,13 @@ Unchanged sentence here."""
             # We should have at least some placeholders if the sides have different line counts
             assert placeholder_count > 0, "Should have placeholder lines to synchronize blocks"
             
-            # Check that both panels have the same number of total sentence divs
-            # (including placeholders)
-            left_sentences = page.locator(".panel:first-child .block div")
-            right_sentences = page.locator(".panel:last-child .block div")
+            # Check that both sides have the same number of sentence divs (table has 2 block-cell columns)
+            left_cells = page.locator(".diff-table tbody td.block-cell:first-of-type")
+            right_cells = page.locator(".diff-table tbody td.block-cell:last-of-type")
+            left_sentences = left_cells.locator("div")
+            right_sentences = right_cells.locator("div")
             
-            # The total sentence count should be equal on both sides
+            # Total sentence/placeholder count should be equal on both sides
             assert left_sentences.count() == right_sentences.count(), \
                 "Both panels should have equal number of sentence elements (including placeholders)"
                 

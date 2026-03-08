@@ -4,7 +4,7 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from backend.diff_service import DiffService
+from diff_tool import DiffService
 from backend.file_service import FileService
 
 
