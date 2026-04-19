@@ -26,6 +26,7 @@
       :right-label="rightLabel"
       @copy-to-original="handleCopyToOriginal"
       @copy-to-modified="handleCopyToModified"
+      @modified-sentence-input="handleModifiedSentenceInput"
     />
   </div>
 </template>
@@ -65,6 +66,7 @@ export default {
       has_unsaved_changes: false,
       isSaving: false,
       highlightLevel: this.highlightLevel || 'off',
+      _modifiedUndoCellKey: null,
     };
   },
   beforeUnmount() {
@@ -119,7 +121,20 @@ export default {
       this.can_redo = false;
       this.has_unsaved_changes = true;
     },
+    handleModifiedSentenceInput({ blockIndex, sentenceIndex, value }) {
+      const key = `${blockIndex}-${sentenceIndex}`;
+      if (this._modifiedUndoCellKey !== key) {
+        this.saveStateToUndo();
+        this._modifiedUndoCellKey = key;
+      }
+      const block = this.modifiedBlocks[blockIndex];
+      if (!block) return;
+      block.sentences[sentenceIndex] = value;
+      block.isBlank = !block.sentences.some((s) => s !== '');
+      this.has_unsaved_changes = true;
+    },
     handleCopyToOriginal(index) {
+      this._modifiedUndoCellKey = null;
       this.saveStateToUndo();
       const sourceSentences = this.modifiedBlocks[index].sentences.filter((s) => s !== '');
       const targetSentences = this.originalBlocks[index].sentences;
@@ -134,6 +149,7 @@ export default {
       };
     },
     handleCopyToModified(index) {
+      this._modifiedUndoCellKey = null;
       this.saveStateToUndo();
       const sourceSentences = this.originalBlocks[index].sentences.filter((s) => s !== '');
       const targetSentences = this.modifiedBlocks[index].sentences;
@@ -159,6 +175,7 @@ export default {
       this.modifiedBlocks = previousState.modified;
       this.can_undo = this.undo_stack.length > 0;
       this.has_unsaved_changes = true;
+      this._modifiedUndoCellKey = null;
     },
     redo() {
       if (this.redo_stack.length === 0) return;
@@ -172,6 +189,7 @@ export default {
       this.modifiedBlocks = nextState.modified;
       this.can_redo = this.redo_stack.length > 0;
       this.has_unsaved_changes = true;
+      this._modifiedUndoCellKey = null;
     },
     buildBlocksForSave() {
       return this.originalBlocks.map((block, index) => ({
@@ -191,6 +209,7 @@ export default {
         this.has_unsaved_changes = false;
         this.undo_stack = [];
         this.can_undo = false;
+        this._modifiedUndoCellKey = null;
       } finally {
         this.isSaving = false;
       }

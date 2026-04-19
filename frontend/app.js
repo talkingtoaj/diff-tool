@@ -23,7 +23,8 @@ createApp({
             isLoading: false,
             isSaving: false,
             error: null,
-            highlightLevel: 'off' // 'off', 'sentence', 'word'
+            highlightLevel: 'off', // 'off', 'sentence', 'word'
+            _modifiedUndoCellKey: null,
         }
     },
     mounted() {
@@ -46,7 +47,7 @@ createApp({
                 modifiedBlocks: Array,
                 highlightLevel: String
             },
-            emits: ['copy-to-original', 'copy-to-modified'],
+            emits: ['copy-to-original', 'copy-to-modified', 'modified-sentence-input'],
             data() {
                 return {
                     wordDiffCache: {}
@@ -219,14 +220,13 @@ createApp({
                                     </div>
                                 </td>
                                 <td :class="['block-cell', modifiedBlocks[index]?.type, { 'blank-block': modifiedBlocks[index]?.isBlank }]">
-                                    <div v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
-                                         :class="{ 'sentence-placeholder': sentence === '' }">
-                                        <template v-if="sentence === ''">&nbsp;</template>
-                                        <template v-else-if="highlightLevel === 'word'">
-                                            <span v-html="renderSentenceWordDiff(originalBlocks[index]?.sentences?.[sIndex] || '', sentence, 'modified')"></span>
-                                        </template>
-                                        <template v-else>{{ sentence }}</template>
-                                    </div>
+                                    <textarea v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []" :key="'mod-s-' + index + '-' + sIndex"
+                                        class="modified-sentence-input"
+                                        rows="1"
+                                        spellcheck="false"
+                                        :value="sentence"
+                                        @input="$emit('modified-sentence-input', { blockIndex: index, sentenceIndex: sIndex, value: $event.target.value })"
+                                    ></textarea>
                                 </td>
                             </tr>
                         </tbody>
@@ -322,7 +322,20 @@ createApp({
             this.can_redo = false;
             this.has_unsaved_changes = true;
         },
+        handleModifiedSentenceInput({ blockIndex, sentenceIndex, value }) {
+            const key = `${blockIndex}-${sentenceIndex}`;
+            if (this._modifiedUndoCellKey !== key) {
+                this.saveStateToUndo();
+                this._modifiedUndoCellKey = key;
+            }
+            const block = this.modifiedBlocks[blockIndex];
+            if (!block) return;
+            block.sentences[sentenceIndex] = value;
+            block.isBlank = !block.sentences.some((s) => s !== '');
+            this.has_unsaved_changes = true;
+        },
         handleCopyToOriginal(index) {
+            this._modifiedUndoCellKey = null;
             this.saveStateToUndo();
             const sourceSentences = this.modifiedBlocks[index].sentences.filter(s => s !== '');
             const targetSentences = this.originalBlocks[index].sentences;
@@ -339,6 +352,7 @@ createApp({
             };
         },
         handleCopyToModified(index) {
+            this._modifiedUndoCellKey = null;
             this.saveStateToUndo();
             const sourceSentences = this.originalBlocks[index].sentences.filter(s => s !== '');
             const targetSentences = this.modifiedBlocks[index].sentences;
@@ -369,6 +383,7 @@ createApp({
             
             this.can_undo = this.undo_stack.length > 0;
             this.has_unsaved_changes = true;
+            this._modifiedUndoCellKey = null;
         },
         redo() {
             if (this.redo_stack.length === 0) return;
@@ -385,6 +400,7 @@ createApp({
             
             this.can_redo = this.redo_stack.length > 0;
             this.has_unsaved_changes = true;
+            this._modifiedUndoCellKey = null;
         },
         async saveChanges() {
             if (!this.has_unsaved_changes) return;
@@ -406,7 +422,8 @@ createApp({
                 this.has_unsaved_changes = false;
                 this.undo_stack = [];
                 this.can_undo = false;
-                
+                this._modifiedUndoCellKey = null;
+
                 alert('Changes saved successfully!');
                 
             } catch (err) {
@@ -437,6 +454,7 @@ createApp({
             this.undo_stack = [];
             this.can_undo = false;
             this.has_unsaved_changes = false;
+            this._modifiedUndoCellKey = null;
             this.file1 = null;
             this.file2 = null;
             

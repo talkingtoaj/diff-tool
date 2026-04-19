@@ -4,11 +4,6 @@ import os
 from playwright.sync_api import Page, expect
 
 
-@pytest.fixture(scope="session")
-def base_url():
-    return "http://localhost:8006"
-
-
 class TestDiffRendering:
     """Test that diff content actually renders correctly"""
     
@@ -176,30 +171,55 @@ Unchanged sentence here."""
             page.locator("button:has-text('Compare')").click()
             
             page.wait_for_selector(".diff-viewer", timeout=5000)
-            
-            # Check that sentence placeholders exist
-            placeholders = page.locator(".sentence-placeholder")
-            placeholder_count = placeholders.count()
-            
-            # We should have at least some placeholders if the sides have different line counts
-            assert placeholder_count > 0, "Should have placeholder lines to synchronize blocks"
-            
-            # Check that both sides have the same number of sentence divs (table has 2 block-cell columns)
+
+            # Check that both sides have the same number of lines (original: divs; modified: textareas)
             left_cells = page.locator(".diff-table tbody td.block-cell:first-of-type")
             right_cells = page.locator(".diff-table tbody td.block-cell:last-of-type")
             left_sentences = left_cells.locator("div")
-            right_sentences = right_cells.locator("div")
-            
-            # Total sentence/placeholder count should be equal on both sides
-            assert left_sentences.count() == right_sentences.count(), \
-                "Both panels should have equal number of sentence elements (including placeholders)"
+            right_sentences = right_cells.locator("textarea.modified-sentence-input")
+
+            assert left_sentences.count() == right_sentences.count(), (
+                "Both panels should have equal number of sentence rows (divs vs textareas)"
+            )
                 
         finally:
             os.unlink(original_path)
             os.unlink(modified_path)
 
+    def test_modified_pane_editing_marks_unsaved(self, page: Page, base_url: str):
+        """Modified column is editable; typing enables save and unsaved indicator."""
+        page.goto(base_url)
 
-    
+        original_content = "Alpha sentence. Beta sentence."
+        modified_content = "Alpha sentence. Beta modified."
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f1:
+            f1.write(original_content)
+            original_path = f1.name
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f2:
+            f2.write(modified_content)
+            modified_path = f2.name
+
+        try:
+            page.locator('input[type="file"]').first.set_input_files(original_path)
+            page.locator('input[type="file"]').nth(1).set_input_files(modified_path)
+            page.locator("button:has-text('Compare')").click()
+            page.wait_for_selector(".diff-viewer", timeout=5000)
+
+            first_modified = page.locator("textarea.modified-sentence-input").first
+            expect(first_modified).to_be_visible()
+            expect(page.locator(".unsaved-indicator")).not_to_be_visible()
+
+            first_modified.fill("Alpha sentence EDITED.")
+
+            expect(page.locator(".unsaved-indicator")).to_be_visible()
+            save_btn = page.locator("button.btn.primary:has-text('Save Changes')")
+            expect(save_btn).to_be_enabled()
+        finally:
+            os.unlink(original_path)
+            os.unlink(modified_path)
+
     def test_diff_viewer_shows_sentences(self, page: Page, base_url: str):
         """Test that sentences are displayed in diff blocks"""
         page.goto(base_url)

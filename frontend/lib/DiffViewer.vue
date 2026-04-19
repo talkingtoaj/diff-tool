@@ -44,17 +44,15 @@
             </div>
           </td>
           <td :class="['diff-tool-viewer__cell', modifiedBlocks[index]?.type, { 'diff-tool-viewer__blank': modifiedBlocks[index]?.isBlank }]">
-            <div
+            <textarea
               v-for="(sentence, sIndex) in modifiedBlocks[index]?.sentences || []"
               :key="'mod-s-' + index + '-' + sIndex"
-              :class="{ 'diff-tool-viewer__placeholder': sentence === '' }"
-            >
-              <template v-if="sentence === ''">&nbsp;</template>
-              <template v-else-if="highlightLevel === 'word'">
-                <span v-html="renderSentenceWordDiff(originalBlocks[index]?.sentences?.[sIndex] || '', sentence, 'modified')"></span>
-              </template>
-              <template v-else>{{ sentence }}</template>
-            </div>
+              class="diff-tool-viewer__modified-input"
+              rows="1"
+              :value="sentence"
+              spellcheck="false"
+              @input="onModifiedInput(index, sIndex, $event)"
+            ></textarea>
           </td>
         </tr>
       </tbody>
@@ -72,11 +70,18 @@ export default {
     leftLabel: { type: String, default: 'Original' },
     rightLabel: { type: String, default: 'Modified' },
   },
-  emits: ['copy-to-original', 'copy-to-modified'],
+  emits: ['copy-to-original', 'copy-to-modified', 'modified-sentence-input'],
   data() {
     return { wordDiffCache: {} };
   },
   methods: {
+    onModifiedInput(blockIndex, sentenceIndex, event) {
+      this.$emit('modified-sentence-input', {
+        blockIndex,
+        sentenceIndex,
+        value: event.target.value,
+      });
+    },
     escapeHtml(text) {
       const div = document.createElement('div');
       div.textContent = text;

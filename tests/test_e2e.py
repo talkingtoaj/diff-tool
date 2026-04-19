@@ -7,11 +7,6 @@ from playwright.sync_api import Page, expect
 import httpx
 
 
-@pytest.fixture(scope="session")
-def base_url():
-    return "http://localhost:8006"
-
-
 def call_api_directly(original_path: str, modified_path: str) -> dict:
     """Call the diff API directly with file data"""
     with open(original_path, 'rb') as f1, open(modified_path, 'rb') as f2:
@@ -74,38 +69,6 @@ def set_up_diff_viewer(page: Page, original_text: str, modified_text: str):
 def upload_files_with_js(page: Page, original_path: str, modified_path: str):
     """Upload files using JavaScript - placeholder for future use"""
     pass
-
-
-@pytest.fixture(scope="session", autouse=True)
-def before_all():
-    import subprocess
-    import time
-    import sys
-    from pathlib import Path
-
-    # Change to repo root (parent of tests/)
-    repo_root = Path(__file__).resolve().parent.parent
-    original_dir = os.getcwd()
-    os.chdir(repo_root)
-    
-    # Start FastAPI server
-    server_process = subprocess.Popen(
-        [sys.executable, "backend/main.py"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    
-    # Wait for server to start
-    time.sleep(3)
-    
-    yield server_process
-    
-    # Cleanup: kill server
-    server_process.terminate()
-    server_process.wait()
-    
-    # Restore original directory
-    os.chdir(original_dir)
 
 
 class TestDiffToolE2E:

@@ -4,11 +4,6 @@ import os
 from playwright.sync_api import Page, expect
 
 
-@pytest.fixture(scope="session")
-def base_url():
-    return "http://localhost:8006"
-
-
 class TestScrollSync:
     """Test scroll synchronization between left and right panels"""
 

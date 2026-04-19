@@ -206,6 +206,32 @@
   line-height: 1.6;
 }
 
+.diff-tool-viewer__modified-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2.4em;
+  margin-bottom: 6px;
+  font: inherit;
+  line-height: 1.6;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  resize: vertical;
+}
+
+.diff-tool-viewer__modified-input:last-child {
+  margin-bottom: 0;
+}
+
+.diff-tool-viewer__modified-input:focus {
+  border-color: #007bff;
+  background: #ffffff;
+  outline: none;
+}
+
 .diff-tool-viewer__copy-controls {
   display: flex;
   flex-direction: column;
