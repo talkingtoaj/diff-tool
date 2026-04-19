@@ -1,6 +1,6 @@
 {
   "name": "diff-tool-viewer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "./dist/diff-tool-viewer.umd.cjs",
   "module": "./dist/diff-tool-viewer.js",

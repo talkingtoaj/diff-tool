@@ -1,6 +1,6 @@
 [project]
 name = "diff-tool"
-version = "0.1.0"
+version = "0.1.1"
 description = "Sentence-level diff algorithm and block reconstruction; consumable as a library or with the standalone FastAPI + Vue app."
 readme = "README.md"
 requires-python = ">=3.10"
