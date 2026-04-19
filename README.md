@@ -13,11 +13,12 @@ A simple FastAPI + Vue.js application for comparing text files with sentence-lev
 
 ## Setup (standalone app)
 
-1. From the repo root, install the package and backend dependencies:
+1. From the repo root, sync the environment (installs the `dev` dependency group: API stack + tests; omit with `uv sync --no-dev` if you only need the library):
    ```bash
-   uv pip install -e .
-   uv pip install -r backend/requirements.txt
+   uv sync
    ```
+
+   Minimal library-only install (no FastAPI): `uv sync --no-dev`. To match extras explicitly: `uv sync --extra backend --extra dev`.
 
 2. Run the FastAPI server (from repo root so `diff_tool` is importable):
    ```bash
@@ -35,7 +36,7 @@ A simple FastAPI + Vue.js application for comparing text files with sentence-lev
    - `←` Copy from Modified → Original
    - `→` Copy from Original → Modified
 4. Click "Undo" to revert the last change
-5. Click "Save Changes" to write changes to disk
+5. Click "Save Changes" to persist on the server and **download** the updated modified file (your browser cannot write back to the original path you picked; replace your local file from the download if needed)
 6. Click "Cancel" to close the session without saving
 
 ## Backup Location

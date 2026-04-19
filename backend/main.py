@@ -118,8 +118,9 @@ async def save_changes(session_id: str, blocks: List[DiffBlock]):
     
     session["modified_text"] = modified_text
     session["blocks"] = blocks_dict
-    
-    return {"success": True}
+
+    # Return text so the browser can download it: uploads are copies; the picker path is not writable from the web app.
+    return {"success": True, "modified_text": modified_text}
 
 
 @app.post("/api/diff/from-text")

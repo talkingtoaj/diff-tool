@@ -1,3 +1,6 @@
+# Prefer: from repo root run `uv sync` (see pyproject.toml [dependency-groups]).
+# This file remains for pip-only installs, e.g. pip install -r backend/requirements.txt
 fastapi
 uvicorn
 python-multipart
+httpx

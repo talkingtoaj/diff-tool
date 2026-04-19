@@ -1,6 +1,6 @@
 [project]
 name = "diff-tool"
-version = "0.1.1"
+version = "0.1.2"
 description = "Sentence-level diff algorithm and block reconstruction; consumable as a library or with the standalone FastAPI + Vue app."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,6 +14,24 @@ backend = [
     "httpx",
 ]
 dev = [
+    "pytest",
+    "playwright",
+    "pytest-playwright",
+]
+
+# Installed by default on `uv sync` (library wheels still ship with zero runtime deps).
+[dependency-groups]
+dev = [
+    { include-group = "backend" },
+    { include-group = "test" },
+]
+backend = [
+    "fastapi",
+    "uvicorn",
+    "python-multipart",
+    "httpx",
+]
+test = [
     "pytest",
     "playwright",
     "pytest-playwright",

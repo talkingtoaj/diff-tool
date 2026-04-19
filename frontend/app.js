@@ -179,7 +179,38 @@ createApp({
                     
                     this.wordDiffCache[cacheKey] = html;
                     return html;
-                }
+                },
+                sizeModifiedTextarea(el) {
+                    if (!el || el.nodeName !== 'TEXTAREA') return;
+                    el.style.height = 'auto';
+                    el.style.height = `${el.scrollHeight}px`;
+                },
+                sizeAllModifiedTextareas() {
+                    const root = this.$el;
+                    if (!root?.querySelectorAll) return;
+                    root.querySelectorAll('textarea.modified-sentence-input').forEach((el) => {
+                        this.sizeModifiedTextarea(el);
+                    });
+                },
+                onModifiedInput(blockIndex, sentenceIndex, event) {
+                    this.$emit('modified-sentence-input', {
+                        blockIndex,
+                        sentenceIndex,
+                        value: event.target.value,
+                    });
+                    this.sizeModifiedTextarea(event.target);
+                },
+            },
+            mounted() {
+                this.$nextTick(() => this.sizeAllModifiedTextareas());
+            },
+            watch: {
+                modifiedBlocks: {
+                    deep: true,
+                    handler() {
+                        this.$nextTick(() => this.sizeAllModifiedTextareas());
+                    },
+                },
             },
             template: `
                 <div class="diff-viewer">
@@ -225,7 +256,7 @@ createApp({
                                         rows="1"
                                         spellcheck="false"
                                         :value="sentence"
-                                        @input="$emit('modified-sentence-input', { blockIndex: index, sentenceIndex: sIndex, value: $event.target.value })"
+                                        @input="onModifiedInput(index, sIndex, $event)"
                                     ></textarea>
                                 </td>
                             </tr>
@@ -402,6 +433,18 @@ createApp({
             this.has_unsaved_changes = true;
             this._modifiedUndoCellKey = null;
         },
+        downloadTextAsFile(filename, text) {
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename || 'modified.txt';
+            a.rel = 'noopener';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        },
         async saveChanges() {
             if (!this.has_unsaved_changes) return;
             
@@ -417,14 +460,17 @@ createApp({
                     modified_start: index
                 }));
                 
-                await axios.post(`/api/diff/${this.session_id}/save`, blocksForSave);
-                
+                const { data } = await axios.post(`/api/diff/${this.session_id}/save`, blocksForSave);
+
                 this.has_unsaved_changes = false;
                 this.undo_stack = [];
                 this.can_undo = false;
                 this._modifiedUndoCellKey = null;
 
-                alert('Changes saved successfully!');
+                if (data && typeof data.modified_text === 'string') {
+                    const name = (this.file2 && this.file2.name) ? this.file2.name : 'modified.txt';
+                    this.downloadTextAsFile(name, data.modified_text);
+                }
                 
             } catch (err) {
                 this.error = 'Error saving changes: ' + (err.response?.data?.detail || err.message);

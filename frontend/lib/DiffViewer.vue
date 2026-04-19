@@ -74,13 +74,37 @@ export default {
   data() {
     return { wordDiffCache: {} };
   },
+  mounted() {
+    this.$nextTick(() => this.sizeAllModifiedTextareas());
+  },
+  watch: {
+    modifiedBlocks: {
+      deep: true,
+      handler() {
+        this.$nextTick(() => this.sizeAllModifiedTextareas());
+      },
+    },
+  },
   methods: {
+    sizeModifiedTextarea(el) {
+      if (!el || el.nodeName !== 'TEXTAREA') return;
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    },
+    sizeAllModifiedTextareas() {
+      const root = this.$el;
+      if (!root?.querySelectorAll) return;
+      root.querySelectorAll('.diff-tool-viewer__modified-input').forEach((el) => {
+        this.sizeModifiedTextarea(el);
+      });
+    },
     onModifiedInput(blockIndex, sentenceIndex, event) {
       this.$emit('modified-sentence-input', {
         blockIndex,
         sentenceIndex,
         value: event.target.value,
       });
+      this.sizeModifiedTextarea(event.target);
     },
     escapeHtml(text) {
       const div = document.createElement('div');

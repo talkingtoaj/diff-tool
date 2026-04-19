@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: diff-tool
-Version: 0.1.0
+Version: 0.1.1
 Summary: Sentence-level diff algorithm and block reconstruction; consumable as a library or with the standalone FastAPI + Vue app.
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
@@ -29,11 +29,12 @@ A simple FastAPI + Vue.js application for comparing text files with sentence-lev
 
 ## Setup (standalone app)
 
-1. From the repo root, install the package and backend dependencies:
+1. From the repo root, sync the environment (installs the `dev` dependency group: API stack + tests; omit with `uv sync --no-dev` if you only need the library):
    ```bash
-   uv pip install -e .
-   uv pip install -r backend/requirements.txt
+   uv sync
    ```
+
+   Minimal library-only install (no FastAPI): `uv sync --no-dev`. To match extras explicitly: `uv sync --extra backend --extra dev`.
 
 2. Run the FastAPI server (from repo root so `diff_tool` is importable):
    ```bash

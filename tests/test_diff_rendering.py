@@ -186,6 +186,48 @@ Unchanged sentence here."""
             os.unlink(original_path)
             os.unlink(modified_path)
 
+    def test_modified_textarea_shows_full_multiline_sentence_without_inner_scroll(
+        self, page: Page, base_url: str
+    ):
+        """Multiline modified text must expand the textarea so content is not clipped."""
+        page.goto(base_url)
+
+        original_content = "Short original."
+        modified_content = (
+            "line0\nline1\nline2\nline3\nline4\nline5\nline6\nline7\nline8\nline9."
+        )
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f1:
+            f1.write(original_content)
+            original_path = f1.name
+
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f2:
+            f2.write(modified_content)
+            modified_path = f2.name
+
+        try:
+            page.locator('input[type="file"]').first.set_input_files(original_path)
+            page.locator('input[type="file"]').nth(1).set_input_files(modified_path)
+            page.locator("button:has-text('Compare')").click()
+            page.wait_for_selector(".diff-viewer", timeout=5000)
+
+            ta = page.locator(".block-cell.changed textarea.modified-sentence-input").first
+            expect(ta).to_be_visible()
+
+            dims = ta.evaluate(
+                """(el) => ({
+                clientHeight: el.clientHeight,
+                scrollHeight: el.scrollHeight,
+            })"""
+            )
+            assert dims["clientHeight"] >= dims["scrollHeight"] - 2, (
+                f"Textarea should grow to fit content; clientHeight={dims['clientHeight']}, "
+                f"scrollHeight={dims['scrollHeight']}"
+            )
+        finally:
+            os.unlink(original_path)
+            os.unlink(modified_path)
+
     def test_modified_pane_editing_marks_unsaved(self, page: Page, base_url: str):
         """Modified column is editable; typing enables save and unsaved indicator."""
         page.goto(base_url)

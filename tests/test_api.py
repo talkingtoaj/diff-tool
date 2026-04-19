@@ -96,7 +96,11 @@ And another sentence."""
         # Then save changes
         save_response = client.post(f"/api/diff/{session_id}/save", json=blocks)
         assert save_response.status_code == 200
-        assert save_response.json()["success"] == True
+        payload = save_response.json()
+        assert payload["success"] is True
+        assert "modified_text" in payload
+        assert isinstance(payload["modified_text"], str)
+        assert len(payload["modified_text"]) > 0
     
     def test_save_changes_invalid_session(self, client):
         response = client.post("/api/diff/invalid-session-id/save", json=[])

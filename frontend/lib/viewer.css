@@ -220,6 +220,7 @@
   background: transparent;
   color: inherit;
   resize: vertical;
+  overflow-y: hidden;
 }
 
 .diff-tool-viewer__modified-input:last-child {
